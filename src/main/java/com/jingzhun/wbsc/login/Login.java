@@ -71,9 +71,9 @@ public class Login extends ApiBaseAction{
             }
         }
         System.out.println(webId + " " + username + " " + password);
+        System.out.println(webId + " " + username + " " + password);
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
-        /*++++++++++++++++++第2步：获取cookie+++++++++++++++++*/
         URL url = new URL(surl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);  //打开输出，向服务器输出参数（POST方式、字节）（写参数之前应先将参数的字节长度设置到配置"Content-Length"<字节长度>）
