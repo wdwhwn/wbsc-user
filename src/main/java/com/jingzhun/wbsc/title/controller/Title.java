@@ -96,9 +96,6 @@ public class Title implements Job{
             try {
                 log.error("方法参数为："+map.get("locationId").toString()+map.get("categoryName").toString()+map.get("keywords").toString()+map.get("keywords1").toString()+map.get("keywords2").toString()+map.get("brand").toString()+map.get("model").toString()+map.get("product").toString());
                 paramObtain(map.get("locationId").toString(),map.get("categoryName").toString(),map.get("keywords").toString(),map.get("keywords1").toString(),map.get("keywords2").toString(),map.get("brand").toString(),map.get("model").toString(),null,null,null,null,map.get("product").toString());
-//                JwtHttpUtil.httpRequest("http://localhost:8083/title","paramObtain",null);
-
-//                HttpRequest.sendPost1("http://localhost:8083/title.do/paramObtain","userId=1",null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
