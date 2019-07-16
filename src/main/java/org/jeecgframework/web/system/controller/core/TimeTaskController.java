@@ -1,10 +1,14 @@
 package org.jeecgframework.web.system.controller.core;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
 
+import io.swagger.annotations.ApiOperation;
+import org.jeecgframework.core.beanvalidator.BeanValidators;
 import org.jeecgframework.core.common.controller.BaseController;
 import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
 import org.jeecgframework.core.common.model.json.AjaxJson;
@@ -15,14 +19,26 @@ import org.jeecgframework.core.util.HttpRequest;
 import org.jeecgframework.core.util.IpUtil;
 import org.jeecgframework.core.util.MyBeanUtils;
 import org.jeecgframework.core.util.StringUtil;
+import org.jeecgframework.jwt.util.GsonUtil;
+import org.jeecgframework.jwt.util.ResponseMessage;
+import org.jeecgframework.jwt.util.Result;
 import org.jeecgframework.tag.core.easyui.TagUtil;
+import org.jeecgframework.web.black.entity.TsBlackListEntity;
+import org.jeecgframework.web.system.enums.InterfaceEnum;
+import org.jeecgframework.web.system.pojo.base.InterfaceRuleDto;
 import org.jeecgframework.web.system.pojo.base.TSTimeTaskEntity;
 import org.jeecgframework.web.system.service.SystemService;
 import org.jeecgframework.web.system.service.TimeTaskServiceI;
+import org.jeecgframework.web.system.util.InterfaceUtil;
 import org.quartz.impl.triggers.CronTriggerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,7 +57,7 @@ import com.alibaba.fastjson.JSONObject;
 @Controller
 @RequestMapping("/timeTaskController")
 public class TimeTaskController extends BaseController {
-
+	private static final Logger log = LoggerFactory.getLogger(TimeTaskController.class);
 	@Autowired
 	private TimeTaskServiceI timeTaskService;
 	@Autowired(required=false)
@@ -62,7 +78,6 @@ public class TimeTaskController extends BaseController {
 
 	/**
 	 * easyui AJAX请求数据
-	 * 
 	 * @param request
 	 * @param response
 	 * @param dataGrid
@@ -103,13 +118,14 @@ public class TimeTaskController extends BaseController {
 
 	/**
 	 * 添加定时任务管理
-	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "save")
 	@ResponseBody
 	public AjaxJson save(TSTimeTaskEntity timeTask, HttpServletRequest request) {
+		log.error("TimeTaskController.save , param:{timeTask = [" + timeTask + "], request = [" + request + "]} ");
+
 		String message = null;
 		AjaxJson j = new AjaxJson();
 
@@ -174,6 +190,8 @@ public class TimeTaskController extends BaseController {
 		j.setMsg(isUpdate?"定时任务管理更新成功":"定时任务管理更新失败");
 		return j;
 	}
+
+
 	
 	/**
 	 * 启动或者停止任务
@@ -181,12 +199,10 @@ public class TimeTaskController extends BaseController {
 	@RequestMapping(params = "startOrStopTask")
 	@ResponseBody
 	public AjaxJson startOrStopTask(TSTimeTaskEntity timeTask, HttpServletRequest request) {
-		
 		AjaxJson j = new AjaxJson();
 		boolean isStart = timeTask.getIsStart().equals("1");
 		timeTask = timeTaskService.get(TSTimeTaskEntity.class, timeTask.getId());		
 		boolean isSuccess = false;
-		
 		if ("0".equals(timeTask.getIsEffect())) {
 			j.setMsg("该任务为禁用状态，请解除禁用后重新启动");
 			return j;
@@ -202,10 +218,8 @@ public class TimeTaskController extends BaseController {
 		//String serverIp = InetAddress.getLocalHost().getHostAddress();
 		List<String> ipList = IpUtil.getLocalIPList();
 		String runServerIp = timeTask.getRunServerIp();
-
 		if((ipList.contains(runServerIp) || StringUtil.isEmpty(runServerIp) || "本地".equals(runServerIp)) && (runServerIp.equals(timeTask.getRunServer()))){//当前服务器IP匹配成功
-
-			isSuccess = dynamicTask.startOrStop(timeTask ,isStart);	
+			isSuccess = dynamicTask.startOrStop(timeTask ,isStart);
 		}else{
 			try {
 				String url = "http://"+timeTask.getRunServer()+"/timeTaskController.do?remoteTask";//spring-mvc.xml

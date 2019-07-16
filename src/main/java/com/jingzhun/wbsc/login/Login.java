@@ -95,6 +95,7 @@ public class Login extends ApiBaseAction{
         Jedis jedis = JedisUtil.getJedis();
         String loginName=null;
         jedis.set("userId",userId+"");
+        jedis.hset("webid",userId+"",webId+"");
         if(cookieVal!=null){
             jedis.set(userId+"", cookieVal);
         }

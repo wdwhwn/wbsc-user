@@ -1770,7 +1770,7 @@ function listFileImgFormat(value,type){
 	// var value1 = "imgCCCC/server/"+value;
 	//查询列表  图片路径 判断是否为微信图片url，此时不加域名
 	if(value.indexOf("thirdwx")<0){
-        var value="http://localhost:8084/images/server/"+value
+        var value="http://localhost:8083/images/server/"+value
 	}
     // alert(value)
 	if("image"==type){

@@ -414,6 +414,9 @@ public class CommonServiceImpl implements CommonService {
 		return commonDao.findForJdbc(sql, objs);
 	}
 
+
+
+
 	@Transactional(readOnly = true)
 	public List<Map<String, Object>> findForJdbcParam(String sql, int page,
 			int rows, Object... objs) {

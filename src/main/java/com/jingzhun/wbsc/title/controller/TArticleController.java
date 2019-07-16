@@ -1,47 +1,53 @@
-package com.jingzhun.wbsc.user.controller;
+package com.jingzhun.wbsc.title.controller;
+import com.jingzhun.wbsc.title.entity.TArticleEntity;
+import com.jingzhun.wbsc.title.service.TArticleServiceI;
 
-import com.jingzhun.wbsc.user.entity.TArticleEntity;
-import com.jingzhun.wbsc.user.service.TArticleServiceI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
+
 import org.jeecgframework.core.common.controller.BaseController;
 import org.jeecgframework.core.common.exception.BusinessException;
 import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
 import org.jeecgframework.core.common.model.json.AjaxJson;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.constant.Globals;
-import org.jeecgframework.core.util.ExceptionUtil;
-import org.jeecgframework.core.util.MyBeanUtils;
-import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.core.util.StringUtil;
+import org.jeecgframework.tag.core.easyui.TagUtil;
+import org.jeecgframework.web.system.service.SystemService;
+import org.jeecgframework.core.util.MyBeanUtils;
+
+import java.io.OutputStream;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
-import org.jeecgframework.tag.core.easyui.TagUtil;
-import org.jeecgframework.web.system.service.SystemService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jeecgframework.core.util.ResourceUtil;
+import java.io.IOException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import java.util.Map;
+import java.util.HashMap;
+import org.jeecgframework.core.util.ExceptionUtil;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**   
  * @Title: Controller  
  * @Description: t_article
  * @author onlineGenerator
- * @date 2019-06-11 11:46:49
+ * @date 2019-07-13 12:07:07
  * @version V1.0   
  *
  */
@@ -64,7 +70,7 @@ public class TArticleController extends BaseController {
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
-		return new ModelAndView("com/jingzhun/wbsc/user/tArticleList");
+		return new ModelAndView("com/jingzhun/wbsc/title/tArticleList");
 	}
 
 	/**
@@ -77,7 +83,7 @@ public class TArticleController extends BaseController {
 	 */
 
 	@RequestMapping(params = "datagrid")
-	public void datagrid(TArticleEntity tArticle, HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+	public void datagrid(TArticleEntity tArticle,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		CriteriaQuery cq = new CriteriaQuery(TArticleEntity.class, dataGrid);
 		//查询条件组装器
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, tArticle, request.getParameterMap());
@@ -123,13 +129,13 @@ public class TArticleController extends BaseController {
 	 */
 	 @RequestMapping(params = "doBatchDel")
 	@ResponseBody
-	public AjaxJson doBatchDel(String ids, HttpServletRequest request){
+	public AjaxJson doBatchDel(String ids,HttpServletRequest request){
 		String message = null;
 		AjaxJson j = new AjaxJson();
 		message = "t_article删除成功";
 		try{
 			for(String id:ids.split(",")){
-				TArticleEntity tArticle = systemService.getEntity(TArticleEntity.class,
+				TArticleEntity tArticle = systemService.getEntity(TArticleEntity.class, 
 				Integer.parseInt(id)
 				);
 				tArticleService.delete(tArticle);
@@ -207,7 +213,7 @@ public class TArticleController extends BaseController {
 			tArticle = tArticleService.getEntity(TArticleEntity.class, tArticle.getId());
 			req.setAttribute("tArticle", tArticle);
 		}
-		return new ModelAndView("com/jingzhun/wbsc/user/tArticle-add");
+		return new ModelAndView("com/jingzhun/wbsc/title/tArticle-add");
 	}
 	/**
 	 * t_article编辑页面跳转
@@ -220,7 +226,7 @@ public class TArticleController extends BaseController {
 			tArticle = tArticleService.getEntity(TArticleEntity.class, tArticle.getId());
 			req.setAttribute("tArticle", tArticle);
 		}
-		return new ModelAndView("com/jingzhun/wbsc/user/tArticle-update");
+		return new ModelAndView("com/jingzhun/wbsc/title/tArticle-update");
 	}
 	
 	/**
@@ -241,14 +247,14 @@ public class TArticleController extends BaseController {
 	 * @param response
 	 */
 	@RequestMapping(params = "exportXls")
-	public String exportXls(TArticleEntity tArticle, HttpServletRequest request, HttpServletResponse response
-			, DataGrid dataGrid, ModelMap modelMap) {
+	public String exportXls(TArticleEntity tArticle,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
 		CriteriaQuery cq = new CriteriaQuery(TArticleEntity.class, dataGrid);
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, tArticle, request.getParameterMap());
 		List<TArticleEntity> tArticles = this.tArticleService.getListByCriteriaQuery(cq,false);
 		modelMap.put(NormalExcelConstants.FILE_NAME,"t_article");
 		modelMap.put(NormalExcelConstants.CLASS,TArticleEntity.class);
-		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("t_article列表", "导出人:"+ ResourceUtil.getSessionUser().getRealName(),
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("t_article列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
 			"导出信息"));
 		modelMap.put(NormalExcelConstants.DATA_LIST,tArticles);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
@@ -260,11 +266,11 @@ public class TArticleController extends BaseController {
 	 * @param response
 	 */
 	@RequestMapping(params = "exportXlsByT")
-	public String exportXlsByT(TArticleEntity tArticle, HttpServletRequest request, HttpServletResponse response
-			, DataGrid dataGrid, ModelMap modelMap) {
+	public String exportXlsByT(TArticleEntity tArticle,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
     	modelMap.put(NormalExcelConstants.FILE_NAME,"t_article");
     	modelMap.put(NormalExcelConstants.CLASS,TArticleEntity.class);
-    	modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("t_article列表", "导出人:"+ ResourceUtil.getSessionUser().getRealName(),
+    	modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("t_article列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
     	"导出信息"));
     	modelMap.put(NormalExcelConstants.DATA_LIST,new ArrayList());
     	return NormalExcelConstants.JEECG_EXCEL_VIEW;

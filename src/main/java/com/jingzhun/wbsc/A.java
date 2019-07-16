@@ -1,27 +1,30 @@
 package com.jingzhun.wbsc;
 
+import com.jingzhun.wbsc.util.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+
 /**
  * Created by Administrator on 2019/6/11 0011.
  */
-public class A {
-    public static void main(String[] args) {
-        String ss="String param1=\"title=北京餐饮培训西本85265饼干 面包 咖啡糕点培训\"+\n" +
-                "                \"&keyWord=饼干 面包 咖啡\"\n" +
-                "                +\"&pics=//image.qinfabu.com/img/2019/6/12/20190612145045863.png\"\n" +
-                "                +\"&typeid=3003001\"\n" +
-                "                +\"&AttrValue[0][name]='品牌/厂家'\"\n" +
-                "                +\"&AttrValue[0][value]=西本\"\n" +
-                "                +\"&AttrValue[0][typeid]='1'\"\n" +
-                "                +\"&AttrValue[1][name]='型号'\"\n" +
-                "                +\"&AttrValue[1][value]=85265\"\n" +
-                "                +\"&AttrValue[1][typeid]='1'\"\n" +
-                "                +\"&price=\"\n" +
-                "                +\"&unit=件\"\n" +
-                "                +\"&id=\"\n" +
-                "                +\"&data=可是到时候牛百叶会变老用水浸泡会失去原有的特征。\";";
+@Controller
 
-        String str=ss.replace("'","");
-        System.out.println("BBBBBBBB");
-        System.out.println(str+"AAAAAAA");
+public class A {
+    private static final Logger log = LoggerFactory.getLogger(A.class);
+    public static void main(String[] args) {
+        java.util.Calendar instance = java.util.Calendar.getInstance();
+        int year = instance.get(Calendar.YEAR);
+        int month = instance.get(Calendar.MONTH);
+        int day = instance.get(Calendar.DAY_OF_MONTH);
+        int hour = instance.get(Calendar.HOUR_OF_DAY);
+        int minute = instance.get(Calendar.MINUTE);
+        String format = String.format("\n年份：%s，\n月份：%s，\n天：%s，\n时：%s，\n分：%s", year + "", month + 1+"", day + "", hour + "", minute + "");
+        log.error(format);
+
     }
 }

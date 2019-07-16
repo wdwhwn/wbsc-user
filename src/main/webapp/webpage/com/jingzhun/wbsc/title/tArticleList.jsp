@@ -3,18 +3,13 @@
 <t:base type="jquery,easyui,tools,DatePicker"></t:base>
 <div class="easyui-layout" fit="true">
   <div region="center" style="padding:0px;border:0px">
-  <t:datagrid name="tArticleList" checkbox="true" pagination="true" fitColumns="true"  actionUrl="tArticleController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
+  <t:datagrid name="tArticleList" checkbox="true" pagination="true" fitColumns="true" title="t_article" actionUrl="tArticleController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="标题"  field="title"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="关键词"  field="keywords"  queryMode="group"  width="120"></t:dgCol>
+   <t:dgCol title="用户名"  field="userid"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
+   <t:dgCol title="网站名"  field="webid"  queryMode="group"  dictionary="t_web,id,web_name"  width="120"></t:dgCol>
    <t:dgCol title="参数"  field="parameter"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="文章"  field="article"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="生成时间"  field="generationTime"  formatter="yyyy-MM-dd"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="用户名称"  field="userId"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
-   <t:dgCol title="任务开始时间"  field="taskBegin"  formatter="yyyy-MM-dd"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="任务持续天数"  field="taskDay"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="任务终止时间"  field="taskEnd"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="网站名称"  field="webId"  queryMode="group"  dictionary="t_web,id,web_name"  width="120"></t:dgCol>
+   <t:dgCol title="创建时间"  field="generationTime"  formatter="yyyy-MM-dd"  queryMode="group"  width="120"></t:dgCol>
+   <t:dgCol title="调度id"  field="scheduleid"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="tArticleController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
    <t:dgToolBar title="录入" icon="icon-add" url="tArticleController.do?goAdd" funname="add"  width="768"></t:dgToolBar>

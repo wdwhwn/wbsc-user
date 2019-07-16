@@ -55,7 +55,7 @@ public class UserRestControllerTest  extends AbstractUnitTest{
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/loginController.do?checkuser=1")
 				.characterEncoding("UTF-8")
 				.param("userName","admin")
-				.param("password", "123456")
+				.param("password", "c44b01947c9e6e3f")
 				.param("randCode", "1234")
 				.header("USER-AGENT", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36")  // 设置USER-AGENT： 浏览器 
 				.session(session))  //关键 每个测试都要设置session 。以保证是使用的同一个session

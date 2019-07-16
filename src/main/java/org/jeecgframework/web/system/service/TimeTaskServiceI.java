@@ -4,4 +4,5 @@ import org.jeecgframework.core.common.service.CommonService;
 
 public interface TimeTaskServiceI extends CommonService{
 
+    public void test();
 }

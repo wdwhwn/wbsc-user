@@ -5,7 +5,7 @@
 	<artifactId>jeecg</artifactId>
 	<version>3.8</version>
 	<packaging>war</packaging>
-	
+
 	<properties>
 		<!-- 自定义依赖包 -->
         <codegenerate.version>3.6.4</codegenerate.version>
@@ -107,6 +107,12 @@
 		<jetty.version>7.6.14.v20131031</jetty.version>
 		<webserver.port>8080</webserver.port>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!--可以使用@slf4j   不用写LogFactory-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 	</properties>
 
 	<!-- 设定主仓库，按设定顺序进行查找  -->

@@ -1,9 +1,13 @@
 package com.jingzhun.wbsc.title.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jingzhun.wbsc.configuration.entity.TLocationEntity;
 import com.jingzhun.wbsc.img.entity.TImageEntity;
-import com.jingzhun.wbsc.img.service.TImageServiceI;
 import com.jingzhun.wbsc.title.entity.Msg;
+import com.jingzhun.wbsc.title.entity.TArticleEntity;
+import com.jingzhun.wbsc.title.entity.TScheduleParamEntity;
+import com.jingzhun.wbsc.title.service.TArticleServiceI;
+import com.jingzhun.wbsc.title.service.TScheduleParamServiceI;
 import com.jingzhun.wbsc.title.service.TitleService;
 import com.jingzhun.wbsc.user.entity.TUserEntity;
 import com.jingzhun.wbsc.util.HttpRequest;
@@ -12,9 +16,20 @@ import com.jingzhun.wbsc.util.JsonUtil;
 import com.jingzhun.wbsc.category.entity.TCategoryEntity;
 import org.jeecgframework.core.common.exception.BusinessException;
 import org.jeecgframework.core.common.model.json.AjaxJson;
+import org.jeecgframework.core.constant.Globals;
+import org.jeecgframework.core.timer.DynamicTask;
+import org.jeecgframework.core.util.IpUtil;
+import org.jeecgframework.core.util.MyBeanUtils;
 import org.jeecgframework.core.util.StringUtil;
+import org.jeecgframework.jwt.util.JwtHttpUtil;
 import org.jeecgframework.web.system.pojo.base.TSDepart;
+import org.jeecgframework.web.system.pojo.base.TSTimeTaskEntity;
 import org.jeecgframework.web.system.service.SystemService;
+import org.jeecgframework.web.system.service.TimeTaskServiceI;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,28 +42,76 @@ import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.*;
 
 /**
  * Created by Administrator on 2019/6/11 0011.
  */
+
 @Controller
 @RequestMapping("/tTitle")
-
-public class Title {
+public class Title implements Job{
     private static final Logger log = LoggerFactory.getLogger(Title.class);
     @Autowired
     private SystemService systemService;
     @Autowired
-    private TImageServiceI tImageService;
+    private TimeTaskServiceI timeTaskService;
+
+    @Autowired(required=false)
+    private DynamicTask dynamicTask;
 
     @Autowired
     private TitleService titleService;
+    @Autowired
+    private TScheduleParamServiceI tScheduleParamServiceI;
+    @Autowired
+    private TArticleServiceI tArticleServiceI;
+    private static Integer i=1;
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        log.error("this对象title："+this);
+        i++;
+        System.out.println("测试定时任务"+i);
+        /*++++++++++++++++++第1步：获取当前时间，利用当前时间检索到schedule+++++++++++++++++*/
+        java.util.Calendar instance = java.util.Calendar.getInstance();
+        int year = instance.get(java.util.Calendar.YEAR);
+        int month = instance.get(java.util.Calendar.MONTH);
+        int day = instance.get(java.util.Calendar.DAY_OF_MONTH);
+        int hour = instance.get(java.util.Calendar.HOUR_OF_DAY);
+        int minute = instance.get(java.util.Calendar.MINUTE);
+        String format = String.format("\n年份：%s，\n月份：%s，\n天：%s，\n时：%s，\n分：%s", year + "", month + 1+"", day + "", hour + "", minute + "");
+        log.error(format);
+        String sql="select * from (select * from t_schedule_param where minute="+minute+" and hour="+hour+" and "+day+" BETWEEN daybegin and dayend and month="+(month+1)+" and year="+year+")t inner join t_s_timetask on t.timetaskid=t_s_timetask.id where t_s_timetask.IS_START=1 and t_s_timetask.IS_EFFECT=1";
+        log.error("sql:"+sql);
+        List<Map<String, Object>> forJdbc = systemService.findForJdbc(sql);
+        log.error("当前的调度的个数："+forJdbc.size());
+        int num = forJdbc.size();
+        if(num==1){
+        /*++++++++++++++++++第2步：获取param，调用方法+++++++++++++++++*/
+            Map<String, Object> stringObjectMap = forJdbc.get(0);
+            Object params = stringObjectMap.get("params");
+            log.error("获取的参数为："+ params);
+            Map map = JsonUtil.toObject(params.toString(), Map.class);
+            try {
+                log.error("方法参数为："+map.get("locationId").toString()+map.get("categoryName").toString()+map.get("keywords").toString()+map.get("keywords1").toString()+map.get("keywords2").toString()+map.get("brand").toString()+map.get("model").toString()+map.get("product").toString());
+                paramObtain(map.get("locationId").toString(),map.get("categoryName").toString(),map.get("keywords").toString(),map.get("keywords1").toString(),map.get("keywords2").toString(),map.get("brand").toString(),map.get("model").toString(),null,null,null,null,map.get("product").toString());
+//                JwtHttpUtil.httpRequest("http://localhost:8083/title","paramObtain",null);
+
+//                HttpRequest.sendPost1("http://localhost:8083/title.do/paramObtain","userId=1",null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
+        }else if(num>1){
+
+        }
+        /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
+    }
     @RequestMapping(params = "list")
     public ModelAndView list(HttpServletRequest request) {
         return new ModelAndView("com/jingzhun/wbsc/title/title");
     }
-
     @RequestMapping(params="getTreeData",method ={RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public AjaxJson getTreeData(TSDepart depatr, HttpServletResponse response, HttpServletRequest request ){
@@ -113,16 +176,19 @@ public class Title {
         }
         return j;
     }
-
+    @RequestMapping(params = "paramObtain1")
+    @ResponseBody
+    public String paramObtain1() throws Exception {
+        testA("1",1,1,1,1,new TScheduleParamEntity());
+        return null;
+    }
     @RequestMapping(params = "paramObtain")
     @ResponseBody
     public String paramObtain(String locationId,String categoryName,String keywords,String keywords1,
                               String keywords2,String brand,String model,Integer day,Integer hour,
-                              Integer minute,Integer second,String product) {
+                              Integer minute,Integer second,String product) throws Exception {
         Jedis jedis = JedisUtil.getJedis();
     /*++++++++++++++++++第1步：生成标题+++++++++++++++++*/
-       /* String[] split = categoryName.split(",");
-        List<String> categoryNameList = Arrays.asList(split);*/
         TLocationEntity tLocationEntity = this.titleService.get(TLocationEntity.class, Integer.parseInt(locationId));
         log.error(tLocationEntity.toString());
         if(keywords1!=null) {
@@ -133,19 +199,12 @@ public class Title {
         }
         String userId = jedis.get("userId");
         String code = createTitle(categoryName, tLocationEntity.getLocationName(), keywords, Integer.parseInt(userId),brand,model,product);
-        String title=null;
-        if("success".equals(code)){
-            String titles = jedis.hget("title", userId);
-            List<String> lists = JsonUtil.toObject(titles, List.class);
-            int i = (int) (Math.random() * lists.size());
-            title = lists.get(i);
-            log.error("标题为："+title);
-        }
+
     /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
     /*++++++++++++++++++第2步：获取到图片+++++++++++++++++*/
         String img = jedis.hget("img", userId);
-        log.error("图片为："+img);
+        log.error("当前使用图片为："+img);
     /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
     /*++++++++++++++++++第3步：生成文本+++++++++++++++++*/
@@ -161,21 +220,249 @@ public class Title {
             ss+=content.toString();
         }
         String content = content(ss);
-        log.error("文本为："+content);
+        log.error("当前文本为："+content);
     /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
     /*++++++++++++++++++第4步：信息发布+++++++++++++++++*/
         String[] attrValue=null;
         String categoryId="3000101101";
         String cookieValue = jedis.get(userId);
-        contentPush(attrValue,Integer.parseInt(userId),categoryId,keywords,content,cookieValue,brand,model);
+        String s = contentPush(attrValue, Integer.parseInt(userId), categoryId, keywords, content, cookieValue, brand, model);
+        Map<String,String> map = JsonUtil.toObject(s, Map.class);
+
     /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
+    
+    
+    /*++++++++++++++++++第5步：添加定时任务+++++++++++++++++*/
+        if (day != null || hour != null || minute != null || second != null) {
+            TScheduleParamEntity tScheduleParamEntity = new TScheduleParamEntity();
+            tScheduleParamEntity.setHour(hour);
+            tScheduleParamEntity.setMinute(minute);
+            tScheduleParamEntity.setPicsid(jedis.hget("imgid",userId));
+            tScheduleParamEntity.setSecond(second);
+            tScheduleParamEntity.setUserid(Integer.parseInt(userId));
+            HashMap<String, String> paramMap = new HashMap<>();
+            paramMap.put("locationId",locationId);
+            paramMap.put("categoryName",categoryName);
+            paramMap.put("keywords",keywords);
+            paramMap.put("keywords1",keywords1);
+            paramMap.put("keywords2",keywords2);
+            paramMap.put("brand",brand);
+            paramMap.put("model",model);
+            paramMap.put("day",day+"");
+            paramMap.put("hour",hour+"");
+            paramMap.put("minute",minute+"");
+            paramMap.put("hour",hour+"");
+            paramMap.put("second",second+"");
+            paramMap.put("product",product);
+            tScheduleParamEntity.setParams(JsonUtil.toJson(paramMap));
+            testA(userId, 1, 1, 1, 1,tScheduleParamEntity);
+        }
+    /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
+    
+    
+    /*++++++++++++++++++第6步：发布任务入库+++++++++++++++++*/
+        //        发布任务入库
+        TArticleEntity tArticleEntity = new TArticleEntity();
+        tArticleEntity.setParameter(map.get("param"));
+        tArticleEntity.setGenerationTime(new Date());
+        tArticleEntity.setScheduleid(jedis.hget("scheduleid",userId));
+        tArticleEntity.setUserid(Integer.parseInt(userId));
+        tArticleEntity.setWebid(Integer.parseInt(jedis.hget("webid",userId)));
+        tArticleServiceI.save(tArticleEntity);
+    /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
+
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("status","success");
         jedis.close();
         return JsonUtil.toJson(objectObjectHashMap);
     }
 
+    public  void testA(String userId,Integer day,Integer hour,Integer minute,Integer second,TScheduleParamEntity tScheduleParamEntity) throws Exception {
+        TSTimeTaskEntity tsTimeTaskEntity = new TSTimeTaskEntity();
+        tsTimeTaskEntity.setTaskId(System.currentTimeMillis() + "");
+        tsTimeTaskEntity.setTaskDescribe(userId + "的定时任务");
+//        0_禁用
+        tsTimeTaskEntity.setIsEffect("1");
+//        1_运行
+        tsTimeTaskEntity.setIsStart("0");
+        tsTimeTaskEntity.setRunServerIp("本地");
+        tsTimeTaskEntity.setRunServer("本地");
+        tsTimeTaskEntity.setClassName("com.jingzhun.wbsc.schedule.Schedule");
+        if (day != null || hour != null || minute != null || second != null) {
+            List<String> strings = new ArrayList<>();
+            if (second != null) {
+                strings.add(second + " ");
+            } else {
+                strings.add("0 ");
+            }
+            if (minute != null) {
+                strings.add(minute + " ");
+            } else {
+                strings.add("0 ");
+            }
+            if (hour != null) {
+                strings.add(hour + " ");
+            } else {
+                strings.add("0 ");
+            }
+            Calendar instance = Calendar.getInstance();
+//            月
+            int month = instance.get(Calendar.MONTH);
+//            日
+            int date = instance.get(Calendar.DATE);
+//            年
+            int year = instance.get(Calendar.YEAR);
+//            获取当月最大天数
+            instance.set(year, month + 1, 0);
+            int maxDay = instance.get(Calendar.DAY_OF_MONTH);
+            String s = String.join("", strings);
+            log.error("表达式："+s);
+
+            if(day==null){
+                day=0;
+            }
+            int i = date + day;
+//            1. 不超过1个月
+            if (i<= maxDay) {
+                s += (date + "-" + i) + " " + (month + 1) + " ? " + year;
+                s="0/5 * * * * ?";
+                tsTimeTaskEntity.setCronExpression(s);
+                saveSchedule(tsTimeTaskEntity,tScheduleParamEntity,date,i,month+1,year,0);
+            } else if (month != 11 && i > maxDay) {
+                //            2. 超过1个月，没有隔年
+                String s1 = s;
+                s += (date + "-" + maxDay) + " " + (month + 1) + " ? " + year;
+                tsTimeTaskEntity.setCronExpression(s);
+                saveSchedule(tsTimeTaskEntity,tScheduleParamEntity,date,maxDay,month + 1,year,1);
+
+                s1 += (1 + "-" + (i - maxDay)) + " " + (month + 2) + " ? " + year;
+                tsTimeTaskEntity.setCronExpression(s1);
+                tsTimeTaskEntity.setTaskId(System.currentTimeMillis()+"");
+                saveSchedule(tsTimeTaskEntity,tScheduleParamEntity,1,(i - maxDay),(month + 2),year,1);
+            } else if (month == 11 && i > maxDay) {
+                //            3. 隔年
+                String s2 = s;
+                s += (date + "-" + maxDay) + " " + (month + 1) + " ? " + year;
+                tsTimeTaskEntity.setCronExpression(s);
+                saveSchedule(tsTimeTaskEntity,tScheduleParamEntity,date,maxDay,(month + 1),year,1);
+
+
+                s2 += (1 + "-" + (i - maxDay)) + "" + (month + 2) + "?" + (year + 1);
+                tsTimeTaskEntity.setCronExpression(s2);
+                tsTimeTaskEntity.setTaskId(System.currentTimeMillis()+"");
+                saveSchedule(tsTimeTaskEntity,tScheduleParamEntity,1,(i - maxDay),(month + 2),year+1,1);
+            }else{
+//
+                throw new Exception("不能超过28天");
+            }
+        }
+    }
+
+//    保存定时任务
+    public void saveSchedule(TSTimeTaskEntity tsTimeTaskEntity,TScheduleParamEntity tScheduleParamEntity,Integer dayBegin,Integer dayEnd,Integer month,Integer year,Integer type) throws Exception {
+        Jedis jedis = JedisUtil.getJedis();
+        //                保存
+        AjaxJson save = save(tsTimeTaskEntity);
+        TSTimeTaskEntity tsTimeTaskEntity1 = new TSTimeTaskEntity();
+        tsTimeTaskEntity1.setId(tsTimeTaskEntity.getId());
+        tsTimeTaskEntity1.setIsStart("1");
+        Integer userid = tScheduleParamEntity.getUserid();
+        startOrStopTask(tsTimeTaskEntity1,userid);
+//                定时任务入库
+        tScheduleParamEntity.setDaybegin(dayBegin);
+        tScheduleParamEntity.setDayend(dayEnd);
+        tScheduleParamEntity.setMonth(month);
+        tScheduleParamEntity.setYear(year);
+        tScheduleParamEntity.setType(type);
+        tScheduleParamEntity.setTimetaskid(jedis.hget("timetaskid",userid+""));
+        tScheduleParamServiceI.save(tScheduleParamEntity);
+        log.error("测试id:"+tScheduleParamEntity.getId());
+        jedis.hset("scheduleid",userid+"",tScheduleParamEntity.getId()+"");
+        jedis.close();
+    }
+//    启动定时任务
+    public AjaxJson startOrStopTask(TSTimeTaskEntity timeTask,Integer userId) {
+        AjaxJson j = new AjaxJson();
+        boolean isStart = timeTask.getIsStart().equals("1");
+        String sql="";
+        timeTask = timeTaskService.get(TSTimeTaskEntity.class, timeTask.getId());
+        Jedis jedis = JedisUtil.getJedis();
+        jedis.hset("timetaskid",userId+"",timeTask.getId());
+        jedis.close();
+        boolean isSuccess = false;
+        if ("0".equals(timeTask.getIsEffect())) {
+            j.setMsg("该任务为禁用状态，请解除禁用后重新启动");
+            return j;
+        }
+        if (isStart && "1".equals(timeTask.getIsStart())) {
+            j.setMsg("该任务当前已经启动，请停止后再试");
+            return j;
+        }
+        if (!isStart && "0".equals(timeTask.getIsStart())) {
+            j.setMsg("该任务当前已经停止，重复操作");
+            return j;
+        }
+        //String serverIp = InetAddress.getLocalHost().getHostAddress();
+        List<String> ipList = IpUtil.getLocalIPList();
+        String runServerIp = timeTask.getRunServerIp();
+        if((ipList.contains(runServerIp) || StringUtil.isEmpty(runServerIp) || "本地".equals(runServerIp)) && (runServerIp.equals(timeTask.getRunServer()))){//当前服务器IP匹配成功
+            isSuccess = dynamicTask.startOrStop(timeTask ,isStart);
+        }else{
+            try {
+                String url = "http://"+timeTask.getRunServer()+"/timeTaskController.do?remoteTask";//spring-mvc.xml
+                String param = "id="+timeTask.getId()+"&isStart="+(isStart ? "1" : "0");
+                JSONObject json = org.jeecgframework.core.util.HttpRequest.sendPost(url, param);
+                isSuccess = json.getBooleanValue("success");
+            } catch (Exception e) {
+                j.setMsg("远程主机‘"+timeTask.getRunServer()+"’响应超时");
+                return j;
+            }
+        }
+        j.setMsg(isSuccess?"定时任务管理更新成功":"定时任务管理更新失败");
+        return j;
+    }
+//  定时任务入库
+    public  AjaxJson save(TSTimeTaskEntity timeTask) {
+        log.error("Test.save , param:{timeTask = [" + timeTask + "]} ");
+        String message = null;
+        AjaxJson j = new AjaxJson();
+        CronTriggerImpl trigger = new CronTriggerImpl();
+        try {
+            trigger.setCronExpression(timeTask.getCronExpression());
+        } catch (ParseException e) {
+            j.setMsg("Cron表达式错误");
+            log.error(JsonUtil.toJson(j));
+            return j;
+        }
+        if (StringUtil.isNotEmpty(timeTask.getId())) {
+            TSTimeTaskEntity t = timeTaskService.get(TSTimeTaskEntity.class, timeTask.getId());
+            if ("1".equals(t.getIsStart())) {
+                message = "任务运行中不可编辑，请先停止任务";
+            }else{
+                message = "定时任务管理更新成功";
+                try {
+                    if(!timeTask.getCronExpression().equals(t.getCronExpression())){
+                        timeTask.setIsEffect("0");
+                    }
+                    MyBeanUtils.copyBeanNotNull2Bean(timeTask, t);
+                    timeTaskService.saveOrUpdate(t);
+                    systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    message = "定时任务管理更新失败";
+                }
+            }
+
+        } else {
+            message = "定时任务管理添加成功";
+            timeTaskService.save(timeTask);
+            systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
+        }
+        j.setMsg(message);
+        log.error(JsonUtil.toJson(j));
+        return j;
+    }
     /**
      * 批量添加 图片
      * 如果图片已经被上传到web，从数据库中获取其web中图片路径
@@ -207,7 +494,6 @@ public class Title {
                 String webImgName = tImage.getWebImgName();
                 userId = tImage.getUserId();
                 /*++++++++++++++++++第2步：如果没有上传，则上传到web中+++++++++++++++++*/
-//                cookieVal="newwjlogin=CfDJ8CCUgNvfCiNBtDoTIkh_tCpMSB5zIL8mF1ggYe3sMzfYBREr6T951eHPS1phn1Zg3lTHcfF4sBaE624QA8QM7qEUgN-ZqrdxY_RauAGROM6n8FVvJRKwFw0qbdaft_s32VUjP5YGzqJamoH0z1cPgVg4Qt8ehqFIeRSr9vKTkiqDBNU-zYUEyRT3c_2gzO3l1BUY8nSxF0OSita5e7OfDkqN10PLfZKqh64WzYVJnu_mJfx7pVE4mBGf807UBKMyo1UB0sZ5qy2P3-XYbiaJztgMrlKkcTt9v8UQTmXp3czXCvkB449_HLWBtI9Sm7I7v8HFca9mQ331n3INOmoF1vl-PRA9kE2mk5anSFx2GsdzdT63HTkpv9pksdRo27JBkl0C4i6NCdrfr3fQXShH8aY7GLKg4bKWEQidZD9m8Cxap_SGmqFYSxEy2umPFMPILpbHUuTSZrUZV0misJ_CpovFC15lHmvKDf7mQMfZswo6GxDlKyz_gl9a9iLvpujJ08HFJ0kaJ3JrHahLXCKAQ-ccyqknpBMdcyCdLwmV7J5XGQ7EfqhYwxKnSqZiJnB-GBx5iaGoufqeOdt1OQFY3wpWViHZlQwaYQxkSNSjLdRAigkRY9PAa_0zBp2A7-hXE7YCCJq2G4H1AuTvM2alVqepaCQ-owGT7eqqG7G-gaB5zS5un4MEqn6yrczsUFKBFdCGaTfXygrVEq6OreDIiczAh5120G7iK6Wo_zMAUVXjY4SPqOX9YPlYpmWbKoC4eB2eV7VY42tLwZ1xwW9TkzRRa8sOEv1M8rSpeWC1gNzFN4wR8Fh5RXWK6tGTHyZ76Npuxll0iq7yYeQCJ4yy-Jhpkjoom8pPXZmKqV0nQvC_wCNgYfoGbtMco0G92Z4gl35PvLroG4A8jn88-5zhLEmOxkGiNXoXVn1So_Ra9nAAVH9fStJjNxpNfwHhUC9bAA; expires=Sat, 15 Jun 2019 22:39:48 GMT; domain=.qinfabu.com; path=/; samesite=lax; httponly";
                 if(StringUtil.isEmpty(webImgName)){
                     String url = tImage.getUrl();
                     path=path+url;
@@ -217,17 +503,17 @@ public class Title {
                     webImgName= msg.getMsg();
                     titleService.update(tImage.getId(),webImgName);
                     log.error(upload);
-//                    HttpRequest.sendPost();
                 }
                 imgList.add(webImgName);
             }
                    /*++++++++++++++++++第4步：获取用户id+++++++++++++++++*/
             TUserEntity de = this.systemService.get(TUserEntity.class,userId );
+            jedis.hset("imgIds",userId+"",ids);
             jedis.hset("img",userId+"",JsonUtil.toJson(imgList));
-
         }catch(Exception e){
             e.printStackTrace();
             message = "t_image删除失败";
+            j.setMsg(message);
             throw new BusinessException(e.getMessage());
         }
         j.setMsg(message);
@@ -250,6 +536,7 @@ public class Title {
         List<String> list = JsonUtil.toObject(titles, List.class);
         int i = (int) (Math.random() * list.size());
         String title = list.get(i);
+
 //        pics 图片
         String picsList = jedis.hget("img", userId + "");
         List<String> picsList1 = JsonUtil.toObject(picsList, List.class);
@@ -288,10 +575,6 @@ public class Title {
                 +"&unit=件"
                 +"&id="
                 +"&data=DATA";
-//        title="北京餐饮培训米兰西典852饼干";
-//        data="<p>石锅拌饭早源于韩国，因此有被大众称为韩国拌饭，石锅拌饭是韩国特有的米饭料理。它的发源地为韩国光州，曾经是朝鲜时代向中国进贡的菜肴，后来演变为韩国的代表性食物。石锅是陶做成的，厚重的黑色陶锅可直接拿到炉具烹煮，而且保温效果好，细嚼慢咽的人可安心享用，不用怕饭菜冷掉。石锅拌饭材料并不新奇特别，主要为米饭、肉类、鸡蛋，以及黄豆芽、蕈菇类和各式野菜;菜的种类并无一定，采用当季对味的季节蔬菜去调配即可。它的烹饪方式也不是很难，成为众多餐饮创业朋友的考虑项目.报价：石锅拌饭套餐学习费用：（详细咨询在线客服老师)(包括食宿材料费 、技术转让费、中餐费、学习材料费、资料费等，中途不收任何费用)学习内容：核心酱料的制作以及各种口味石锅拌饭配方比例操作流程过程到成品!学习安排：一对一教学、现场参观、随到随学、实践操作!</p><p><br/></p>";
-//        pics="//image.qinfabu.com/img/2019/6/12/20190612145045863.png";
-//        keyWords="餐饮";
         String replaceParam = param.replace("TITLE", title)
                 .replace("KEYWORD", keyWords)
                 .replace("PICS", pics)
@@ -300,6 +583,7 @@ public class Title {
                 .replace("ATTRVALUE[BRAND]",brand)
                 .replace("ATTRVALUE[MODEL]",model);
         replaceParam=replaceParam.replace("'","");
+
         log.error("参数为："+replaceParam);
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 //        String param="title=新乡室内精准测量仪离心机4689"+
@@ -316,9 +600,14 @@ public class Title {
 //                "&unit=件"+
 //                "&id="+
 //                "&data=<p>卧式刮刀卸料离心机是连续运转、间歇操作的过滤式离心机，其控制方式为自动控制，也可手动控制。离心机操作过程中的进料、分离、洗涤、脱水、卸料及滤布再生等过程一般均在全速状态下完成，单次循环时间短，处理量大，并可获得较干的滤渣和良好的洗涤效果。GK 系列卧式刮刀卸料离心机广泛应用于化工、食品、轻工、制药、淀粉等行业，对含粗、中、细颗粒的悬浮液均适用，如硫铵、碳铵、聚氯乙烯、木署改性淀粉等。GKH 系列虹吸式卧式离心机在普通卧式刮刀卸料离心机的基础上，利用虹吸原理增加过滤推动力，透过过滤介质的滤液全部进入滤液室，滤液通过虹吸管 ( 撇液管 ) 排出转鼓，调节虹吸管吸入口位置可改变虹吸室内液面深度，以改变过滤推动力，调节过滤速度、处理能力、滤饼的含湿量以及洗涤效率。</p><p><br/></p>";
-        String s = HttpRequest.sendPost1(url, replaceParam, cookieValue);
+//        String s = HttpRequest.sendPost1(url, replaceParam, cookieValue);
+        log.error("信息发布");
+        String s = "";
         jedis.close();
-        return s;
+        HashMap<String, String> map = new HashMap<>();
+        map.put("param",replaceParam);
+        map.put("data",s);
+        return JsonUtil.toJson(map);
     }
 
     @RequestMapping(params = "contentPush1")
@@ -361,20 +650,6 @@ public class Title {
 //        String replaceParam = param.replace("TITLE", title).replace("KEYWORD", keyWords).replace("PICS", pics).replace("TYPEID", typeid + "").replace("PRICE",price).replace("UNIT",unit).replace("DATA",data).replace("ATTRVALUE[BRAND]",brand).replace("ATTRVALUE[MODEL]",model);
 //        log.error("参数为："+replaceParam);
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
-        String param1="title=北京餐饮培训西本85265饼干 面包 咖啡糕点培训"+
-                "&keyWord=饼干 面包 咖啡"
-                +"&pics=//image.qinfabu.com/img/2019/6/12/20190612145045863.png"
-                +"&typeid=3003001"
-                +"&AttrValue[0][name]='品牌/厂家'"
-                +"&AttrValue[0][value]=西本"
-                +"&AttrValue[0][typeid]='1'"
-                +"&AttrValue[1][name]='型号'"
-                +"&AttrValue[1][value]=85265"
-                +"&AttrValue[1][typeid]='1'"
-                +"&price="
-                +"&unit=件"
-                +"&id="
-                +"&data=可是到时候牛百叶会变老用水浸泡会失去原有的特征。";
 //        1. 去掉单引号
 //
         String param="title=上海户外精准测量仪方向仪78956"+
@@ -454,24 +729,33 @@ public class Title {
      */
     public String createTitle(String categoryName,String locationName,String keyWords,Integer userId,String brand,String model,String product) {
 
+        try {
         /*++++++++++++++++++第1步：通过参数id，获取对应的参数名称+++++++++++++++++*/
-        List<String> strings = Arrays.asList(keyWords);
-        String[] stirngs = keyWords.split(" ");
+            String[] strings = keyWords.split(" ");
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
         /*++++++++++++++++++第2步：生成标题+++++++++++++++++*/
-        List<String> titleList=new ArrayList<>();
-        for (int i2 = 0; i2 < strings.size(); i2++) {
-            titleList.add(locationName+categoryName+brand+model+strings.get(i2)+product);
-        }
+            List<String> titleList=new ArrayList<>();
+            String title="";
+            log.error("总共产生"+strings.length+"个标题");
+            for (int i2 = 0; i2 < strings.length; i2++) {
+                title=locationName+categoryName+brand+model+strings[i2]+product;
+                titleList.add(title);
+                log.error("第{}个标题，题目为：{}",i2,strings[i2]);
+            }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
         /*++++++++++++++++++第3步：标题列表存储到session中+++++++++++++++++*/
-        Jedis jedis = JedisUtil.getJedis();
-
-        jedis.hset("title",userId+"", JsonUtil.toJson(titleList));
-        jedis.close();
+            Jedis jedis = JedisUtil.getJedis();
+            jedis.hset("title",userId+"", JsonUtil.toJson(titleList));
+            jedis.close();
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
-        return "success";
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "fail";
     }
+
+
 }

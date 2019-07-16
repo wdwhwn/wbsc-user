@@ -460,7 +460,6 @@ public class ResourceUtil {
 	public static String getBasePath() {
 		HttpServletRequest request = ContextHolderUtils.getRequest();
 		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
-        logger.error("AAAAAA"+basePath);
 //        PropertiesUtil properties = new PropertiesUtil("path.properties");
 //        String basePath=properties.readProperty("path");
 //        logger.error("BBBB"+basePath1);

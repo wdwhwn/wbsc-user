@@ -10,5 +10,9 @@ import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
 @Service("timeTaskService")
 @Transactional
 public class TimeTaskServiceImpl extends CommonServiceImpl implements TimeTaskServiceI {
-	
+
+    @Override
+    public void test() {
+        System.out.println("beanFacotry");
+    }
 }

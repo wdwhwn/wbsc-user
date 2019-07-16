@@ -26,7 +26,7 @@ public class SmsSendTask implements Job{
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================推送消息定时任务开始===================");
 		try {			
-			tSSmsService.send();
+//			tSSmsService.send();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>t_article</title>
+<title>t_schedule_param</title>
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <t:base type="bootstrap,bootstrap-table,layer,validform,bootstrap-form"></t:base>
@@ -14,90 +14,96 @@
  <div class="container" style="width:100%;">
 	<div class="panel-heading"></div>
 	<div class="panel-body">
-	<form class="form-horizontal" role="form" id="formobj" action="tArticleController.do?doAdd" method="POST">
+	<form class="form-horizontal" role="form" id="formobj" action="tScheduleParamController.do?doAdd" method="POST">
 		<input type="hidden" id="btn_sub" class="btn_sub"/>
 		<input type="hidden" id="id" name="id"/>
 		<div class="form-group">
-			<label for="title" class="col-sm-3 control-label">标题：</label>
+			<label for="userid" class="col-sm-3 control-label">用户：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="title" name="title" type="text" maxlength="50" class="form-control input-sm" placeholder="请输入标题"  ignore="ignore" />
+					<input id="userid" name="userid" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入用户"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="keywords" class="col-sm-3 control-label">关键词：</label>
+			<label for="picsid" class="col-sm-3 control-label">图片id：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="keywords" name="keywords" type="text" maxlength="80" class="form-control input-sm" placeholder="请输入关键词"  ignore="ignore" />
+					<input id="picsid" name="picsid" type="text" maxlength="255" class="form-control input-sm" placeholder="请输入图片id"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="parameter" class="col-sm-3 control-label">参数：</label>
+			<label for="second" class="col-sm-3 control-label">秒数：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="parameter" name="parameter" type="text" maxlength="255" class="form-control input-sm" placeholder="请输入参数"  ignore="ignore" />
+					<input id="second" name="second" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入秒数"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="generationTime" class="col-sm-3 control-label">生成时间：</label>
+			<label for="minute" class="col-sm-3 control-label">分数：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-				<input name="generationTime" type="text" class="form-control laydate-date"  ignore="ignore"  />
-				<span class="input-group-addon" ><span class="glyphicon glyphicon-calendar"></span></span>
+					<input id="minute" name="minute" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入分数"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="userId" class="col-sm-3 control-label">用户名称：</label>
+			<label for="hour" class="col-sm-3 control-label">小时：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<t:dictSelect field="userId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_user" dictField="id" dictText="username"  hasLabel="false"  title="用户名称"></t:dictSelect>     
+					<input id="hour" name="hour" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入小时"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="taskBegin" class="col-sm-3 control-label">任务开始时间：</label>
+			<label for="daybegin" class="col-sm-3 control-label">开始天数：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-				<input name="taskBegin" type="text" class="form-control laydate-date"  ignore="ignore"  />
-				<span class="input-group-addon" ><span class="glyphicon glyphicon-calendar"></span></span>
+					<input id="daybegin" name="daybegin" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入开始天数"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="taskDay" class="col-sm-3 control-label">任务持续天数：</label>
+			<label for="dayend" class="col-sm-3 control-label">结束天数：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="taskDay" name="taskDay" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入任务持续天数"  datatype="n"  ignore="ignore" />
+					<input id="dayend" name="dayend" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入结束天数"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="taskEnd" class="col-sm-3 control-label">任务终止时间：</label>
+			<label for="month" class="col-sm-3 control-label">月份：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="taskEnd" name="taskEnd" type="text" maxlength="255" class="form-control input-sm" placeholder="请输入任务终止时间"  ignore="ignore" />
+					<input id="month" name="month" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入月份"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="webId" class="col-sm-3 control-label">网站名称：</label>
+			<label for="year" class="col-sm-3 control-label">年份：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<t:dictSelect field="webId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_web" dictField="id" dictText="web_name"  hasLabel="false"  title="网站名称"></t:dictSelect>     
+					<input id="year" name="year" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入年份"  datatype="n"  ignore="ignore" />
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="type" class="col-sm-3 control-label">type：</label>
+			<div class="col-sm-7">
+				<div class="input-group" style="width:100%">
+					<input id="type" name="type" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入type"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>
 					<div class="form-group">
-						<label for="article" class="col-sm-3 control-label">文章：</label>
+						<label for="params" class="col-sm-3 control-label">参数：</label>
 						<div class="col-sm-7">
 				    <div class="input-group" style="width:100%">
-						  	 	<textarea name="article" value = "${tArticle.article}" class="form-control input-sm" rows="6"  ignore="ignore" ></textarea>
+						  	 	<textarea name="params" value = "${tScheduleParam.params}" class="form-control input-sm" rows="6"  ignore="ignore" ></textarea>
 						<span class="Validform_checktip" style="float:left;height:0px;"></span>
-						<label class="Validform_label" style="display: none">文章</label>
+						<label class="Validform_label" style="display: none">参数</label>
 			          </div>
 						</div>
 	</form>
@@ -106,20 +112,6 @@
 <script type="text/javascript">
 var subDlgIndex = '';
 $(document).ready(function() {
-	$(".laydate-datetime").each(function(){
-		var _this = this;
-		laydate.render({
-		  elem: this,
-		  format: 'yyyy-MM-dd HH:mm:ss',
-		  type: 'datetime'
-		});
-	});
-	$(".laydate-date").each(function(){
-		var _this = this;
-		laydate.render({
-		  elem: this
-		});
-	});
 	//单选框/多选框初始化
 	$('.i-checks').iCheck({
 		labelHover : false,

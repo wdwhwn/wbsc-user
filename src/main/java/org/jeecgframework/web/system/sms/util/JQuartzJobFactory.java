@@ -23,14 +23,14 @@ public class JQuartzJobFactory extends SpringBeanJobFactory {
      * 覆盖createJobInstance方法
      * 对其创建出来的对象autowire
      */
-    @Override  
-    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {  
-  
-        Object jobInstance = super.createJobInstance(bundle);  
-  
-        beanFactory.autowireBean(jobInstance);  
-  
-        return jobInstance;  
-  
-    }  
+    @Override
+    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
+
+        Object jobInstance = super.createJobInstance(bundle);
+
+        beanFactory.autowireBean(jobInstance);
+
+        return jobInstance;
+
+    }
 } 

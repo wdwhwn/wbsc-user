@@ -278,4 +278,25 @@ public class TSTimeTaskEntity implements java.io.Serializable {
 	public void setUpdateName(java.lang.String updateName){
 		this.updateName = updateName;
 	}
+
+	@Override
+	public String toString() {
+		return "TSTimeTaskEntity{" +
+				"id='" + id + '\'' +
+				", taskId='" + taskId + '\'' +
+				", taskDescribe='" + taskDescribe + '\'' +
+				", cronExpression='" + cronExpression + '\'' +
+				", isEffect='" + isEffect + '\'' +
+				", isStart='" + isStart + '\'' +
+				", createDate=" + createDate +
+				", createBy='" + createBy + '\'' +
+				", createName='" + createName + '\'' +
+				", updateDate=" + updateDate +
+				", updateBy='" + updateBy + '\'' +
+				", updateName='" + updateName + '\'' +
+				", className='" + className + '\'' +
+				", runServerIp='" + runServerIp + '\'' +
+				", runServer='" + runServer + '\'' +
+				'}';
+	}
 }

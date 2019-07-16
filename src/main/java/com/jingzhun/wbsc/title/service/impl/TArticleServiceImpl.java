@@ -1,14 +1,22 @@
-package com.jingzhun.wbsc.user.service.impl;
-
-import com.jingzhun.wbsc.user.entity.TArticleEntity;
-import com.jingzhun.wbsc.user.service.TArticleServiceI;
+package com.jingzhun.wbsc.title.service.impl;
+import com.jingzhun.wbsc.title.service.TArticleServiceI;
 import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import com.jingzhun.wbsc.title.entity.TArticleEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.io.Serializable;
+import org.jeecgframework.core.util.ApplicationContextUtil;
+import org.jeecgframework.core.util.MyClassLoader;
+import org.jeecgframework.core.util.StringUtil;
+import org.jeecgframework.web.cgform.enhance.CgformEnhanceJavaInter;
+
+import org.jeecgframework.minidao.util.FreemarkerParseFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.jeecgframework.core.util.ResourceUtil;
 
 @Service("tArticleService")
 @Transactional

@@ -121,7 +121,6 @@ public class JwtHttpUtil {
 			httpUrlConn.setRequestMethod(requestMethod);
 			if ("GET".equalsIgnoreCase(requestMethod))
 				httpUrlConn.connect();
-
 			// 当有数据需要提交时
 			if (null != outputStr) {
 				OutputStream outputStream = httpUrlConn.getOutputStream();

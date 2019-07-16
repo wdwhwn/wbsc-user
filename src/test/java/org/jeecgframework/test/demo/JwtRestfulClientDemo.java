@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 public class JwtRestfulClientDemo {
 	
 	public static String getToken(String userName,String password){
-		String url = "http://localhost:8080/jeecg/rest/tokens?username="+userName+"&password="+password;
+		String url = "http://localhost:8083/rest/tokens?username="+userName+"&password="+password;
 		String token= JwtHttpUtil.httpRequest(url, "POST", null);
 		return token;
 	}
@@ -51,14 +51,14 @@ public class JwtRestfulClientDemo {
 	
 	//查询黑名单
 	public static JSONObject getBlackList(String token,String id){
-		String url = "http://localhost:8080/jeecg/rest/tsBlackListController/"+id;
+		String url = "http://localhost:8083/rest/tsBlackListController/"+id;
 		JSONObject resp= JwtHttpUtil.httpRequest(url, "GET", null,token);
 		return resp;
 	}
 	
 	
 	public static void main(String[] args) {
-		String token = getToken("interfaceuser","123456");
+		String token = getToken("admin","123456");
 		System.out.println(" token : "+ token);
 //		String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZG1pbiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNTExODU5NjM2fQ.Emfe8VZKA_L33jaW8ZUtVFVDEin83Np_d3gKlPIZryE";
 		

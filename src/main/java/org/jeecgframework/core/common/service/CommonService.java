@@ -301,6 +301,7 @@ public interface CommonService {
 	 */
 	public List<Map<String, Object>> findForJdbc(String sql, Object... objs);
 
+
 	/**
 	 * 通过JDBC查找对象集合 使用指定的检索标准检索数据返回数据
 	 */
