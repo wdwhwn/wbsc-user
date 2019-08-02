@@ -1,6 +1,7 @@
 package org.jeecgframework.web.system.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jeecgframework.web.system.pojo.base.DictEntity;
@@ -11,6 +12,8 @@ import org.jeecgframework.web.system.pojo.base.TSType;
 import org.jeecgframework.web.system.pojo.base.TSTypegroup;
 import org.jeecgframework.web.system.pojo.base.TSUser;
 import org.jeecgframework.core.common.service.CommonService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author  张代浩
@@ -27,6 +30,7 @@ public interface SystemService extends CommonService{
  	 * 返回类型： List<DictEntity>
  	 */
  	public List<DictEntity> queryDict(String dicTable,String dicCode, String dicText);
+
 
 	/**
 	 * 登陆用户检查

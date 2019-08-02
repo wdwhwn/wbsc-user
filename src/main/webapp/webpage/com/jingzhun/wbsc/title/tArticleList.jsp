@@ -5,7 +5,7 @@
   <div region="center" style="padding:0px;border:0px">
   <t:datagrid name="tArticleList" checkbox="true" pagination="true" fitColumns="true" title="t_article" actionUrl="tArticleController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="用户名"  field="userid"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
+   <t:dgCol title="用户名"  field="userKey"  queryMode="group"   width="120"></t:dgCol>
    <t:dgCol title="网站名"  field="webid"  queryMode="group"  dictionary="t_web,id,web_name"  width="120"></t:dgCol>
    <t:dgCol title="参数"  field="parameter"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="创建时间"  field="generationTime"  formatter="yyyy-MM-dd"  queryMode="group"  width="120"></t:dgCol>

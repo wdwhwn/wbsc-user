@@ -19,6 +19,9 @@
          * @param {Object} data
          */
         function callBack(data) {
+            alert(data);
+            alert(data.msg);
+            alert(JSON.stringify(data));
         	$("#user").val(data.userName);
         }
         
@@ -41,7 +44,7 @@
   </SCRIPT>
   </head>
   <body>
-<t:formvalid formid="formobj" dialog="false" layout="div" callback="test" action="jeecgFormvalidController.do?testsubmit=2" beforeSubmit="setContentc">
+<t:formvalid formid="formobj" dialog="false" layout="div" callback="callBack" action="jeecgFormvalidController.do?testsubmit=2" beforeSubmit="setContentc">
 	 <fieldset class="step" style="padding-bottom: 20px;">
 	 <legend>tiptype="1"</legend>
 		<div class="form">

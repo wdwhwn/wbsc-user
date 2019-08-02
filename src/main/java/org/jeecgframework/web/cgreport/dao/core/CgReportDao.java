@@ -1,11 +1,11 @@
 package org.jeecgframework.web.cgreport.dao.core;
 
+import org.jeecgframework.minidao.annotation.Arguments;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
 
-import org.jeecgframework.minidao.annotation.Arguments;
-import org.jeecgframework.minidao.annotation.MiniDao;
-import org.springframework.stereotype.Repository;
 
 /**
  * 

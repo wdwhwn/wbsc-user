@@ -25,8 +25,8 @@ public class TContentEntity implements java.io.Serializable {
 	@Excel(name="素材内容",width=15)
 	private String content;
 	/**用户名称*/
-	@Excel(name="用户名称",width=15,dictTable ="t_user",dicCode ="id",dicText ="username")
-	private Integer userId;
+	@Excel(name="用户名称",width=15)
+	private Integer userKey;
 
 	/**
 	 *方法: 取得java.lang.Integer
@@ -86,16 +86,16 @@ public class TContentEntity implements java.io.Serializable {
 	 *@return: java.lang.Integer  用户名称
 	 */
 
-	@Column(name ="USER_ID",nullable=true,length=10)
-	public Integer getUserId(){
-		return this.userId;
+	@Column(name ="USER_KEY",nullable=true,length=10)
+	public Integer getUserKey(){
+		return this.userKey;
 	}
 
 	/**
 	 *方法: 设置java.lang.Integer
 	 *@param: java.lang.Integer  用户名称
 	 */
-	public void setUserId(Integer userId){
-		this.userId = userId;
+	public void setUserKey(Integer userKey){
+		this.userKey = userKey;
 	}
 }

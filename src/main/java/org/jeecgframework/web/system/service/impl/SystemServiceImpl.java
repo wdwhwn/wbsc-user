@@ -1,12 +1,6 @@
 package org.jeecgframework.web.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,6 +71,10 @@ public class SystemServiceImpl extends CommonServiceImpl implements SystemServic
 		return dictList;
 	}
 
+
+
+
+
 	/**
 	 * 添加日志
 	 */
@@ -134,8 +132,8 @@ public class SystemServiceImpl extends CommonServiceImpl implements SystemServic
 	/**
 	 * 根据类型分组编码和名称获取TypeGroup,如果为空则创建一个
 	 *
-	 * @param typecode
-	 * @param typename
+	 * @param
+	 * @param
 	 * @return
 	 */
 	@Transactional(readOnly = true)
@@ -265,7 +263,7 @@ public class SystemServiceImpl extends CommonServiceImpl implements SystemServic
 	/**
 	 * 获取页面控件权限控制的
 	 * JS片段
-	 * @param out
+	 * @param
 	 */
 	@Transactional(readOnly = true)
 	public String getAuthFilterJS() {

@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,14 +88,14 @@ public class HttpRequest {
 
     /**
      * 向指定 URL 发送POST方法的请求  发送微信统一下单、查询订单接口
-     *
      * @param url   发送请求的 URL
+     * @param param 请求参数,请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果
      */
-    public static String sendPost(String url, String param,String cookieVal) {
-//        String param = StringToUTF8.toUTF8(param1);
+    public static Map<String,String> sendPost(String url, String param,String cookieVal) {
         PrintWriter out = null;
         BufferedReader in = null;
+        HashMap<String, String> resultMap = new HashMap<String, String>();
         String result = "";
         try {
             URL realUrl = new URL(url);
@@ -102,26 +103,28 @@ public class HttpRequest {
             URLConnection conn = realUrl.openConnection();
             // 设置通用的请求属性
             conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("user-agent",
-                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            conn.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             conn.setRequestProperty("Cookie", cookieVal);
+            conn.setRequestProperty("Referer", "http://my.huangye88.com/");
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);
             conn.setDoInput(true);
-
             // 获取URLConnection对象对应的输出流
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
-//            out.print(param.getBytes("UTF-8"));
             out.print(param);
             // flush输出流的缓冲
             out.flush();
             // 定义BufferedReader输入流来读取URL的响应
             in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+                    new InputStreamReader(conn.getInputStream(),"UTF-8"));
             String line;
+            Map<String, List<String>> map = conn.getHeaderFields();
+            List<String> strings = map.get("Set-Cookie");
+            String cookie= listToString(strings);
+            resultMap.put("cookie",cookie);
             while ((line = in.readLine()) != null) {
                 System.out.println(line);
                 result += line;
@@ -143,15 +146,33 @@ public class HttpRequest {
                 ex.printStackTrace();
             }
         }
-        return result;
+        resultMap.put("data",result);
+        return resultMap;
     }
 
+    public static String listToString(List<String> list) {
+        if (list == null) {
+            return null;
+        }
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        //第一个前面不拼接","
+        for (String string : list) {
+            if (first) {
+                first = false;
+            } else {
+                result.append(";");
+            }
+            result.append(string);
+        }
+        return result.toString();
+    }
     /**
      * 文本生成
      * post请求
      */
     public static String sendPost1(String restUrl, String param,String cookieVal) {
-        String result = "";
+        String result = "true";
         int responseCode;
         HttpURLConnection conn = null;
         try {
@@ -168,6 +189,7 @@ public class HttpRequest {
             conn.setDoOutput(true);
             //输入流
             //OutputStream os = conn.getOutputStream();
+//            这一步会出错：不能识别的host  qinfabu.com
             OutputStreamWriter  os = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
             os.write(param);
             os.flush();
@@ -178,6 +200,7 @@ public class HttpRequest {
                 //输出流
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
                 result = reader.readLine();
+                log.error("信息推送结果："+result);
             }else{
                 result="false";
             }
@@ -228,7 +251,93 @@ public class HttpRequest {
             return line;
 }
 
+//  模拟登录
+    public static String login(String surl,String param) throws IOException{
+//    public String login(String surl,String param) throws IOException{
+   /*++++++++++++++++++第1步：模拟登录+++++++++++++++++*/
+        // 连接地址（通过阅读html源代码获得，即为登陆表单提交的URL）
+        BufferedReader in = null;
+        String result = "";
+        URL url = new URL(surl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+        connection.setDoOutput(true);  //打开输出，向服务器输出参数（POST方式、字节）（写参数之前应先将参数的字节长度设置到配置"Content-Length"<字节长度>）
+        connection.setDoInput(true);//打开输入，从服务器读取返回数据
+        connection.setRequestMethod("POST"); //设置登录模式为POST（字符串大写）
+        connection.setInstanceFollowRedirects(false);
+        connection.connect();
+        OutputStreamWriter out = new OutputStreamWriter(connection
+                .getOutputStream(), "utf-8");
+        out.write(param); // post的关键所在！
+        out.flush();
+        out.close();
+        Map<String, List<String>> headerFields = connection.getHeaderFields();//格式:JSESSIONID=541884418E77E7F07363CCEE91D4FF7E; Path=/
+        List<String> strings = headerFields.get("Set-Cookie");
+        String s = listToString(strings);
+//        printCookie(headerFields);
+        connection.disconnect();
+        return s;
+    }
+
+    public static Map<String,String>  sendGet(String url, String param, String cookieVal,String code) {
+        String result = "";
+        HashMap<String, String> resultMap = new HashMap<String, String>();
+        BufferedReader in = null;
+        try {
+            String urlNameString=null;
+            if(param.length()==0){
+                urlNameString= url;
+            }else{
+                urlNameString= url + "?" + param;
+            }
+            System.out.println(urlNameString);
+            URL realUrl = new URL(urlNameString);
+            // 打开和URL之间的连接
+            URLConnection connection = realUrl.openConnection();
+            // 设置通用的请求属性
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            connection.setRequestProperty("Cookie", cookieVal);
+
+            // 建立实际的连接
+            connection.connect();
+            // 获取所有响应头字段
+            Map<String, List<String>> map = connection.getHeaderFields();
+            List<String> strings = map.get("Set-Cookie");
+            String cookie= listToString(strings);
+            resultMap.put("cookie",cookie);
+
+            // 遍历所有的响应头字段
+            for (String key : map.keySet()) {
+                System.out.println(key + "--->" + map.get(key));
+            }
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream(),code));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+                result += line;
+            }
+        } catch (Exception e) {
+            System.out.println("发送GET请求出现异常！" + e);
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        resultMap.put("data",result);
+        return resultMap;
+    }
 }
 
 

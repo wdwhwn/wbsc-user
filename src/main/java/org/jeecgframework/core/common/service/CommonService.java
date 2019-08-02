@@ -45,9 +45,8 @@ public interface CommonService {
 
 	/**
 	 * 根据实体名称和主键获取实体
-	 * 
 	 * @param <T>
-	 * @param entityName
+	 * @param
 	 * @param id
 	 * @return
 	 */
@@ -94,7 +93,7 @@ public interface CommonService {
 	 * 删除实体主键删除
 	 * 
 	 * @param <T>
-	 * @param entities
+	 * @param
 	 */
 	public <T> void deleteEntityById(Class entityName, Serializable id);
 
@@ -118,7 +117,7 @@ public interface CommonService {
 	 * 通过hql 查询语句查找对象
 	 * 
 	 * @param <T>
-	 * @param query
+	 * @param
 	 * @return
 	 */
 	public <T> List<T> findByQueryString(String hql);
@@ -126,7 +125,7 @@ public interface CommonService {
 	/**
 	 * 根据sql更新
 	 * 
-	 * @param query
+	 * @param
 	 * @return
 	 */
 	public int updateBySqlString(String sql);
@@ -144,7 +143,7 @@ public interface CommonService {
 	 * 通过属性称获取实体带排序
 	 * 
 	 * @param <T>
-	 * @param clas
+	 * @param
 	 * @return
 	 */
 	public <T> List<T> findByPropertyisOrder(Class<T> entityClass,
@@ -190,8 +189,8 @@ public interface CommonService {
 	 * 
 	 * hqlQuery方式分页
 	 * 
-	 * @param cq
-	 * @param isOffset
+	 * @param
+	 * @param
 	 * @return
 	 */
 	public PageList getPageList(final HqlQuery hqlQuery,
@@ -202,7 +201,7 @@ public interface CommonService {
 	 * sqlQuery方式分页
 	 * 
 	 * @param cq
-	 * @param isOffset
+	 * @param
 	 * @return
 	 */
 	public PageList getPageListBySql(final HqlQuery hqlQuery,

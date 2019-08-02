@@ -145,7 +145,7 @@ public class JwtHttpUtil {
 			inputStream = null;
 			httpUrlConn.disconnect();
 			res = buffer.toString();
-			log.debug(res);
+			log.debug("AAAAAAAA:"+res);
 		} catch (ConnectException ce) {
 			LogUtil.info("Weixin server connection timed out.");
 		} catch (Exception e) {

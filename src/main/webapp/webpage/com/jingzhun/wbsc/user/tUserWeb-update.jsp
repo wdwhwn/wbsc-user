@@ -18,10 +18,10 @@
 		<input type="hidden" id="btn_sub" class="btn_sub"/>
 		<input type="hidden" id="id" name="id" value="${tUserWeb.id}"/>
 	<div class="form-group">
-		<label for="userId" class="col-sm-3 control-label">userId：</label>
+		<label for="userKey" class="col-sm-3 control-label">userKey：</label>
 		<div class="col-sm-7">
 			<div class="input-group" style="width:100%">
-				<input id="userId" name="userId" value='${tUserWeb.userId}' type="text" maxlength="10" class="form-control input-sm" placeholder="请输入userId"  datatype="n"  ignore="ignore" />
+				<input id="userKey" name="userId" value='${tUserWeb.userKey}' type="text" maxlength="10" class="form-control input-sm" placeholder="请输入userId"  datatype="n"  ignore="ignore" />
 			</div>
 		</div>
 	</div>

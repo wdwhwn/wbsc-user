@@ -18,12 +18,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.SequenceGenerator;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
-/**   
+/**
  * @Title: Entity
  * @Description: t_user_web
  * @author onlineGenerator
  * @date 2019-06-17 14:09:10
- * @version V1.0   
+ * @version V1.0
  *
  */
 @Entity
@@ -32,9 +32,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 public class TUserWebEntity implements java.io.Serializable {
 	/**id*/
 	private java.lang.Integer id;
-	/**userId*/
-	@Excel(name="userId",width=15)
-	private java.lang.Integer userId;
+
 	/**webId*/
 	@Excel(name="webId",width=15)
 	private java.lang.Integer webId;
@@ -44,7 +42,27 @@ public class TUserWebEntity implements java.io.Serializable {
 	/**password*/
 	@Excel(name="password",width=15)
 	private java.lang.String password;
-	
+
+
+	/**userKey*/
+	@Excel(name="userKey",width=15)
+	private java.lang.String userKey;
+
+	/**注册时间*/
+	@Excel(name="注册时间",width=15,format = "yyyy-MM-dd")
+	private Date date;
+
+	@Column(name ="DATE",nullable=true)
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+
 	/**
 	 *方法: 取得java.lang.Integer
 	 *@return: java.lang.Integer  id
@@ -69,17 +87,17 @@ public class TUserWebEntity implements java.io.Serializable {
 	 *@return: java.lang.Integer  userId
 	 */
 
-	@Column(name ="USER_ID",nullable=true,length=10)
-	public java.lang.Integer getUserId(){
-		return this.userId;
+	@Column(name ="USER_Key",nullable=true,length=10)
+	public java.lang.String getUserKey(){
+		return this.userKey;
 	}
 
 	/**
 	 *方法: 设置java.lang.Integer
 	 *@param: java.lang.Integer  userId
 	 */
-	public void setUserId(java.lang.Integer userId){
-		this.userId = userId;
+	public void setUserKey(java.lang.String userKey){
+		this.userKey = userKey;
 	}
 	/**
 	 *方法: 取得java.lang.Integer

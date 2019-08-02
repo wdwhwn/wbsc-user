@@ -115,7 +115,7 @@
 		<property name="runMode" value="test_mode" />
 	</bean> -->
 
-	
+
 	<!-- 拦截器 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
@@ -225,4 +225,7 @@
 	<!-- Jeecg 插件开发 -->
 	<bean class="org.jeecgframework.p3.core.utils.common.ApplicationContextUtil"></bean>
 	<import resource="classpath:config/spring-config-p3.xml" />
+
+	<bean id="SpringApplicationContext" class="com.jingzhun.wbsc.schedule.ApplicationContextHelper"></bean>
+
 </beans>

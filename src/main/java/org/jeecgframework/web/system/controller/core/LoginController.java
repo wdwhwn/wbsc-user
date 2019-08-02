@@ -95,7 +95,7 @@ public class LoginController extends BaseController{
 	@ResponseBody
 	public AjaxJson checkuser(TSUser user, HttpServletRequest req) {
 
-
+		log.error("测试登陆");
         HttpSession session = req.getSession();
 		AjaxJson j = new AjaxJson();
 		//语言选择

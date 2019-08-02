@@ -33,8 +33,8 @@ public class TImageEntity implements java.io.Serializable {
 	/**id*/
 	private java.lang.Integer id;
 	/**用户名称*/
-	@Excel(name="用户名称",width=15,dictTable ="t_user",dicCode ="id",dicText ="username")
-	private java.lang.Integer userId;
+	@Excel(name="用户key",width=15)
+	private java.lang.String userKey;
 	/**图片*/
 	@Excel(name="图片",width=15)
 	private java.lang.String url;
@@ -44,7 +44,25 @@ public class TImageEntity implements java.io.Serializable {
 	/**网站图片路径*/
 	@Excel(name="网站图片路径",width=15)
 	private java.lang.String webImgName;
-	
+
+	/**网站用户名*/
+	@Excel(name="网站用户名",width=15)
+	private java.lang.String webUsername;
+
+	@Column(name ="WEB_USERNAME",nullable=true,length=255)
+	public java.lang.String getWebUsername(){
+		return this.webUsername;
+	}
+
+	/**
+	 *方法: 设置java.lang.String
+	 *@param: java.lang.String  图片
+	 */
+	public void setWebUsername(java.lang.String webUsername){
+		this.webUsername = webUsername;
+	}
+
+
 	/**
 	 *方法: 取得java.lang.Integer
 	 *@return: java.lang.Integer  id
@@ -69,17 +87,17 @@ public class TImageEntity implements java.io.Serializable {
 	 *@return: java.lang.Integer  用户名称
 	 */
 
-	@Column(name ="USER_ID",nullable=true,length=10)
-	public java.lang.Integer getUserId(){
-		return this.userId;
+	@Column(name ="USER_KEY",nullable=true,length=10)
+	public java.lang.String getUserKey(){
+		return this.userKey;
 	}
 
 	/**
 	 *方法: 设置java.lang.Integer
 	 *@param: java.lang.Integer  用户名称
 	 */
-	public void setUserId(java.lang.Integer userId){
-		this.userId = userId;
+	public void setUserKey(java.lang.String userKey){
+		this.userKey = userKey;
 	}
 	/**
 	 *方法: 取得java.lang.String

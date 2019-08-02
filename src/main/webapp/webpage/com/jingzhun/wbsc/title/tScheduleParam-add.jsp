@@ -18,10 +18,10 @@
 		<input type="hidden" id="btn_sub" class="btn_sub"/>
 		<input type="hidden" id="id" name="id"/>
 		<div class="form-group">
-			<label for="userid" class="col-sm-3 control-label">用户：</label>
+			<label for="userKey" class="col-sm-3 control-label">用户名称：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<input id="userid" name="userid" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入用户"  datatype="n"  ignore="ignore" />
+					<input id="userKey" name="userKey" type="text" maxlength="10" class="form-control input-sm" placeholder="请输入用户名称"  datatype="n"  ignore="ignore" />
 				</div>
 			</div>
 		</div>

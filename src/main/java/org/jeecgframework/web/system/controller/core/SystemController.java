@@ -23,7 +23,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.jingzhun.wbsc.user.entity.TUserWebEntity;
+import com.jingzhun.wbsc.util.JsonUtil;
+import com.jingzhun.wbsc.web.entity.TWebEntity;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -250,8 +254,8 @@ public class SystemController extends BaseController {
 	/**
 	 *
 	 * @param request
-	 * @param comboTree
-	 * @param code
+	 * @param
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "formTree")
@@ -1584,7 +1588,12 @@ public class SystemController extends BaseController {
 //	        	String nowday=new SimpleDateFormat("yyyyMMdd").format(new Date());
 //	        	logger.debug("---nowday----"+nowday);
 //	    		File file = new File(ctxPath+File.separator+bizPath+File.separator+nowday);
-	    		File file = new File(ctxPath+File.separator+bizPath);
+                HttpSession session = request.getSession();
+				TWebEntity webEntity =(TWebEntity) session.getAttribute("web");
+                String identification =webEntity.getIdentification();
+                TUserWebEntity userWeb = (TUserWebEntity) session.getAttribute("userWeb");
+                String username = userWeb.getUsername();
+                File file = new File(ctxPath+File.separator+bizPath+"/"+identification+"/"+username);
 	    		if (!file.exists()) {
 	    			file.mkdirs();// 创建文件根目录
 	    		}
@@ -1595,7 +1604,8 @@ public class SystemController extends BaseController {
 //	    		设定保存的文件名字
 				fileName = orgName.substring(0,orgName.lastIndexOf("."))+"_"+System.currentTimeMillis()+orgName.substring(orgName.indexOf("."));
 //				文件存储的路径
-	    		String savePath = file.getPath() + File.separator + fileName;
+
+                String savePath = file.getPath() + File.separator + fileName;
 	    		String fileExt = FileUtils.getExtend(fileName);
 	    		if("txt".equals(fileExt)){
 	    			FileUtils.uploadTxtFile(mf, savePath);
@@ -1607,7 +1617,7 @@ public class SystemController extends BaseController {
 				j.setMsg(msg);
 //				数据库中文件字段存储的路径
 //				String dbpath=bizPath+File.separator+nowday+File.separator+fileName;
-				String dbpath=bizPath+File.separator+fileName;
+				String dbpath=bizPath+"/"+identification+"/"+username+File.separator+fileName;
 				logger.debug("---dbpath----"+dbpath);
 				if(dbpath.contains("\\")){
 					dbpath = dbpath.replace("\\","/");
@@ -1665,6 +1675,7 @@ public class SystemController extends BaseController {
 		}
     	logger.debug("-----systemController/filedeal.do------------"+msg);
 		j.setMsg(msg);
+        System.out.println("j: "+ JsonUtil.toJson(j));
         return j;
     }
 	

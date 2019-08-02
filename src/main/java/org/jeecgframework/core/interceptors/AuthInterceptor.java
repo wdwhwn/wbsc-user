@@ -55,8 +55,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private List<String> excludeUrls;
 	//模糊匹配排除URLS
 	private List<String> excludeContainUrls;
-	
-	
 
 	/**
 	 * 在controller前拦截
@@ -72,8 +70,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 				return true;
 			}
 		}
-		
-		
+
 		//通过转换，获取用户的请求URL地址
 		String requestPath = ResourceUtil.getJgAuthRequsetPath(request);
 
@@ -191,8 +188,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 	/**
 	 * 转发
 	 * 
-	 * @param user
-	 * @param req
+	 * @param
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "forword")

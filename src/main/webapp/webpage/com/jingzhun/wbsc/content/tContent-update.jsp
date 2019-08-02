@@ -25,14 +25,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group">
-		<label for="userId" class="col-sm-3 control-label">用户名称：</label>
-		<div class="col-sm-7">
-			<div class="input-group" style="width:100%">
-               <t:dictSelect field="userId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_user" dictField="id" dictText="username"  hasLabel="false"  title="用户名称" defaultVal="${tContent.userId}"></t:dictSelect>
+		<div class="form-group">
+			<label for="userKey" class="col-sm-3 control-label">用户key：</label>
+			<div class="col-sm-7">
+				<div class="input-group" style="width:100%">
+					<input id="userKey" name="userKey" value='${tContent.userKey}' type="text" maxlength="50" class="form-control input-sm" placeholder="用户key"  ignore="ignore" />
+				</div>
 			</div>
 		</div>
-	</div>
 					<div class="form-group">
 					<label for="content" class="col-sm-3 control-label">素材内容：</label>
 					<div class="col-sm-7">

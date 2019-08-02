@@ -5,7 +5,7 @@
   <div region="center" style="padding:0px;border:0px">
   <t:datagrid name="tScheduleParamList" checkbox="true" pagination="true" fitColumns="true" title="t_schedule_param" actionUrl="tScheduleParamController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="用户"  field="userid"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
+   <t:dgCol title="用户"  field="userKey"  queryMode="group"    width="120"></t:dgCol>
    <t:dgCol title="参数"  field="params"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="图片id"  field="picsid"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="秒数"  field="second"  queryMode="group"  width="120"></t:dgCol>

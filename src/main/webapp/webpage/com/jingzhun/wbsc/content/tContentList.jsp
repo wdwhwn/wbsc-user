@@ -7,7 +7,7 @@
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="类别名称"  field="categoryId"  queryMode="group"  dictionary="t_category,id,category_name"  width="120"></t:dgCol>
    <t:dgCol title="素材内容"  field="content"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="用户名称"  field="userId"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
+   <t:dgCol title="用户名称"  field="userKey"  queryMode="group"    width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="tContentController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
    <t:dgToolBar title="录入" icon="icon-add" url="tContentController.do?goAdd" funname="add"  width="768"></t:dgToolBar>

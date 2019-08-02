@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.jingzhun.wbsc.user.entity.TUserWebEntity;
+import com.jingzhun.wbsc.util.JsonUtil;
+import com.jingzhun.wbsc.web.entity.TWebEntity;
+import org.jeecgframework.web.system.pojo.base.TSUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,32 +80,43 @@ public class TImageController extends BaseController {
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
-		return new ModelAndView("com/jingzhun/wbsc/img/tImageList");
+	    return new ModelAndView("com/jingzhun/wbsc/img/tImageList");
 	}
 
 	/**
 	 * easyui AJAX请求数据
-	 * 
+	 *  只显示当前用户的所有图片
 	 * @param request
 	 * @param response
 	 * @param dataGrid
-	 * @param user
 	 */
 
 	@RequestMapping(params = "datagrid")
 	public void datagrid(TImageEntity tImage,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+//		获取当前网站、登陆用户的图片库
 		CriteriaQuery cq = new CriteriaQuery(TImageEntity.class, dataGrid);
 		//查询条件组装器
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, tImage, request.getParameterMap());
 		try{
 		//自定义追加查询条件
-		
 		}catch (Exception e) {
 			throw new BusinessException(e.getMessage());
 		}
 		cq.add();
 		this.tImageService.getDataGridReturn(cq, true);
-		TagUtil.datagrid(response, dataGrid);
+        HttpSession session = request.getSession();
+        TUserWebEntity userWeb =(TUserWebEntity) session.getAttribute("userWeb");
+        Map<String, Object> conditionMap = new HashMap<String, Object>();
+		conditionMap.put("webUsername",userWeb.getUsername());
+		conditionMap.put("webId",userWeb.getWebId());
+		try {
+		    List<Map<String, Object>> resultMapList = tImageService.getSelectAll( conditionMap,dataGrid);
+		    dataGrid.setResults(resultMapList);
+		} catch (Exception e) {
+		    logger.error(e.toString(),e);
+		    e.printStackTrace();
+		}
+		TagUtil.datagrid(response,dataGrid);
 	}
 	
 	/**
@@ -158,17 +174,21 @@ public class TImageController extends BaseController {
 
 	/**
 	 * 添加t_image
-	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "doAdd")
 	@ResponseBody
 	public AjaxJson doAdd(TImageEntity tImage, HttpServletRequest request) {
 		String message = null;
-		AjaxJson j = new AjaxJson();
-		message = "t_image添加成功";
-		try{
+        HttpSession session = request.getSession();
+        AjaxJson j = new AjaxJson();
+        System.out.println("doAdd:"+JsonUtil.toJson(tImage));
+        message = "t_image添加成功";
+        TSUser sessionUser = ResourceUtil.getSessionUser();
+        String userKey = sessionUser.getUserKey();
+        tImage.setUserKey(userKey);
+        try{
 			tImageService.save(tImage);
 			systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
@@ -183,7 +203,7 @@ public class TImageController extends BaseController {
 	/**
 	 * 更新t_image
 	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "doUpdate")

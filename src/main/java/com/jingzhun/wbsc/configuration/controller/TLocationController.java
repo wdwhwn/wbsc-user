@@ -147,8 +147,7 @@ public class TLocationController extends BaseController {
 
 	/**
 	 * 添加t_location
-	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "doAdd")

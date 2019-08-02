@@ -152,11 +152,14 @@
 						<i class="iconfont icon-close ui-iconss" style="font-weight:700;font-size:14px;display:none"></i>
 						<i class="iconfont icon-sousuo ui-iconss"></i>
 					</div>
+
 				</div>
 			</div>
 			<ul class="header-bar">
-			
-			<li class="header-bar-nav personInfo hiddenty-xs" style="cursor:pointer;"> 
+				<%--<li class="header-bar-nav personInfo hiddenty-xs" style="cursor:pointer;">
+					<span>网站：${sessionScope.web.webName} &nbsp; &nbsp; 用户名：${sessionScope.userWeb.username}</span>
+				</li>--%>
+				<li class="header-bar-nav personInfo hiddenty-xs" style="cursor:pointer;">
 				<i class="icon-font">&#xe751;</i>&nbsp;
 				<span>控制面板</span>
 				<i class="icon-font adminIcon" style="margin-right:5px;">&#xe607;</i>
@@ -170,7 +173,7 @@
 					<li><a href="javascript:clearLocalstorage()"><t:mutiLang langKey="common.clear.localstorage"/></a></li>
 					<li><a href="javascript:toSwagger()">SwaggerUI</a></li>
 				</ul>
-			</li> 
+			</li>
 			
 			
 			<li class="header-bar-nav hiddenty-xs"> 

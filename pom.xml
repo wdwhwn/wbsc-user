@@ -5,7 +5,7 @@
 	<artifactId>jeecg</artifactId>
 	<version>3.8</version>
 	<packaging>war</packaging>
-
+	
 	<properties>
 		<!-- 自定义依赖包 -->
         <codegenerate.version>3.6.4</codegenerate.version>
@@ -98,21 +98,12 @@
 		<jeecg-p3-biz-demo.version>1.0.2</jeecg-p3-biz-demo.version>
 		<jeecg-p3-biz-chat.version>1.0.5</jeecg-p3-biz-chat.version>
 		<jeecg-p3-biz-mail.version>1.0.0</jeecg-p3-biz-mail.version>
-
-
-
-
+		
 		<!--maven插件变量-->
 		<tomcat.version>2.2</tomcat.version>
 		<jetty.version>7.6.14.v20131031</jetty.version>
 		<webserver.port>8080</webserver.port>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<!--可以使用@slf4j   不用写LogFactory-->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
 	</properties>
 
 	<!-- 设定主仓库，按设定顺序进行查找  -->
@@ -630,8 +621,47 @@
 		    <version>1.0.6</version>
 		</dependency>
 		<!-- update-end-author:taoYan date:20180828 for:jxls导出excel -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+			<type>jar</type>
+		</dependency>
+
+		<!--jsoup  HTML解析-->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.10.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+			<type>jar</type>
+		</dependency>
+
+
+		<!--可以使用@slf4j   不用                                                                                                                                                                                                     写LogFactory-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- 获取执行过js的html -->
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>2.15</version>
+		</dependency>
 
 	</dependencies>
+
+
+
 
 	<organization>
 		<name>JEECG 微云快速开发平台</name>
@@ -642,8 +672,8 @@
 		<plugins>
 	        <plugin>  
                 <artifactId>maven-compiler-plugin</artifactId>  
-                <version>2.3.2</version>
-                <configuration>
+                <version>2.3.2</version>  
+                <configuration>  
                     <source>1.7</source>  
                     <target>1.7</target>  
                     <encoding>UTF-8</encoding>

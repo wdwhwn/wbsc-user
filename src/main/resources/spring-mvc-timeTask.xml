@@ -12,15 +12,52 @@
 	default-autowire="byName" default-lazy-init="false">
 
 	<!-- 定时任务配置 scheduler 方式 注解 -->
-	<context:component-scan base-package="org.jeecgframework.core.timer" />
-	<task:executor id="executor" pool-size="5" />
-	<task:scheduler id="scheduler" pool-size="10" />
-	<task:annotation-driven executor="executor" scheduler="scheduler" />
+	<!--<context:component-scan base-package="org.jeecgframework.core.timer" />-->
+	<!--<task:executor id="executor" pool-size="5" />-->
+	<!--<task:scheduler id="scheduler" pool-size="10" />-->
+	<!--<task:annotation-driven executor="executor" scheduler="scheduler" />-->
 	<!-- 定时任务调度器 -->
-	<bean id="schedulerFactory" lazy-init="false" autowire="no" class="org.jeecgframework.core.timer.DataBaseSchedulerFactoryBean">
-		<property name="jobFactory" ref="jQuartzJobFactory"></property>  
-	</bean>	
+	<!--<bean id="schedulerFactory" lazy-init="false" autowire="no" class="org.jeecgframework.core.timer.DataBaseSchedulerFactoryBean">-->
+		<!--<property name="jobFactory" ref="jQuartzJobFactory"></property>  -->
+	<!--</bean>	-->
 	<!-- 定时任务业务类  配置loadTask随系统启动，以加载初始启动的定时任务 -->
-	<bean id="dynamicTask" class="org.jeecgframework.core.timer.DynamicTask" init-method="loadTask"/>
-	
+	<!--<bean id="dynamicTask" class="org.jeecgframework.core.timer.DynamicTask" init-method="loadTask"/>-->
+
+	<!--新引入  定时任务-->
+	<!--创建JobDetail-->
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<!--指定任务类-->
+		<property name="jobClass" value="com.jingzhun.wbsc.schedule.MyJob"></property>
+		<!--当Job在没有可以使用的trigger的情况下 不删除-->
+		<property name="durability" value="true"></property>
+	</bean>
+	<!--注意 spring quartz整合 一个trigger只可以绑定一个JobDetail 一个jobDetail可以被多个Trigger所使用-->
+	<bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!--绑定JobDetail-->
+		<property name="jobDetail" ref="jobDetail"></property>
+		<property name="cronExpression" value="0-30 * * * * ?"></property>
+	</bean>
+
+	<bean id="trigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!--绑定JobDetail-->
+		<property name="jobDetail" ref="jobDetail"></property>
+		<property name="cronExpression" value="0/1 * * * * ?"></property>
+	</bean>
+
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
+	<bean id="startQuertz" lazy-init="true" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="configLocation" value="classpath:quartz.properties" />
+		<property name="triggers">
+			<list>
+				<!--<ref bean="cronTrigger" />-->
+				<!--<ref bean="trigger"></ref>-->
+				<!--<ref bean="trigger1"></ref>-->
+			</list>
+		</property>
+	</bean>
+	<!--这个类是用来设置触发时间的， startJobs方法启动调度容器，然后按照上面触发器每隔1s执行所配置的myJob2.doSomething()方法 -->
+	<bean id="quartzManager" class="com.jingzhun.wbsc.schedule.QuartzManager" lazy-init="false" init-method="startJobs" >
+		<!--这个对象一定要注入，这样类才能进行管理，还有在类型要用get set方法，不然会报错。-->
+		<property name="scheduler" ref="startQuertz" />
+	</bean>
 </beans>

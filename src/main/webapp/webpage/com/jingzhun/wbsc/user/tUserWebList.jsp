@@ -5,7 +5,7 @@
   <div region="center" style="padding:0px;border:0px">
   <t:datagrid name="tUserWebList" checkbox="true" pagination="true" fitColumns="true" title="t_user_web" actionUrl="tUserWebController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="userId"  field="userId"  queryMode="group"  width="120"></t:dgCol>
+   <t:dgCol title="userKey"  field="userId"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="webId"  field="webId"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="username"  field="username"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="password"  field="password"  queryMode="group"  width="120"></t:dgCol>

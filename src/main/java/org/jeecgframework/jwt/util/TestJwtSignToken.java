@@ -11,7 +11,7 @@ import org.jeecgframework.jwt.def.JwtConstants;
 
 public class TestJwtSignToken {
 
-	public static void main1(String[] args) {
+	public static void main(String[] args) {
 		// 生成JWT签名
 		String compactJws = Jwts.builder().setId("8a8ab0b246dc81120146dc8181950052").setSubject("admin").claim("age", "999").signWith(SignatureAlgorithm.HS512, JwtConstants.JWT_SECRET).compact();
 

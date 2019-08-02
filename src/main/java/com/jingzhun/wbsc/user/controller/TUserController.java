@@ -90,6 +90,7 @@ public class TUserController extends BaseController {
 		}
 		cq.add();
 		this.tUserService.getDataGridReturn(cq, true);
+		logger.error(JsonUtil.toJson(dataGrid));
 		TagUtil.datagrid(response, dataGrid);
 	}
 	

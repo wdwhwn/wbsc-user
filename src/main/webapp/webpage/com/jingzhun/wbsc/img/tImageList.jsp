@@ -5,9 +5,10 @@
   <div region="center" style="padding:0px;border:0px">
   <t:datagrid name="tImageList" checkbox="true" pagination="true" fitColumns="true"  actionUrl="tImageController.do?datagrid" idField="id" sortName="id" fit="true" queryMode="group">
    <t:dgCol title="id"  field="id"  hidden="true"  queryMode="group"  width="120"></t:dgCol>
-   <t:dgCol title="用户名称"  field="userId"  queryMode="group"  dictionary="t_user,id,username"  width="120"></t:dgCol>
+   <t:dgCol title="用户名称"  field="userKey"  queryMode="group"    width="120"></t:dgCol>
    <t:dgCol title="图片"  field="url"  queryMode="group"  image="true" imageSize="50,50" formatterjs="btListImgFormatter" width="120"></t:dgCol>
    <t:dgCol title="网站"  field="webId"  queryMode="group"  dictionary="t_web,id,web_name"  width="120"></t:dgCol>
+   <t:dgCol title="网站用户名"  field="webUsername"  queryMode="group"    width="120"></t:dgCol>
    <t:dgCol title="网站图片路径"  field="webImgName"  queryMode="group"  width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="tImageController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
@@ -24,9 +25,7 @@
  <script type="text/javascript">
  $(document).ready(function(){
  });
- 
-   
- 
+
 //导入
 function ImportXls() {
 	openuploadwin('Excel导入', 'tImageController.do?upload', "tImageList");

@@ -18,10 +18,10 @@
 		<input type="hidden" id="btn_sub" class="btn_sub"/>
 		<input type="hidden" id="id" name="id" value="${tImage.id}"/>
 	<div class="form-group">
-		<label for="userId" class="col-sm-3 control-label">用户名称：</label>
+		<label for="userKey" class="col-sm-3 control-label">用户名称：</label>
 		<div class="col-sm-7">
 			<div class="input-group" style="width:100%">
-               <t:dictSelect field="userId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_user" dictField="id" dictText="username"  hasLabel="false"  title="用户名称" defaultVal="${tImage.userId}"></t:dictSelect>
+				<input id="userKey" name="userKey" value='${tImage.userKey}' type="text" maxlength="255" class="form-control input-sm" placeholder="请输入用户名称"  ignore="ignore" />
 			</div>
 		</div>
 	</div>

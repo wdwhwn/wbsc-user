@@ -56,7 +56,7 @@ public class ApiBaseAction {
     }
 
     public Map<String, Object> toResponsSuccessForSelect(Object data) {
-        Map<String, Object> result = new HashMap<>(2);
+        Map<String, Object> result = new HashMap<String, Object>(2);
         result.put("list", data);
         return toResponsObject(0, "执行成功", result);
     }

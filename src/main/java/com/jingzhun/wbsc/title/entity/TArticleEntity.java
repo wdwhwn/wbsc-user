@@ -33,8 +33,8 @@ public class TArticleEntity implements java.io.Serializable {
 	/**id*/
 	private java.lang.Integer id;
 	/**用户名*/
-	@Excel(name="用户名",width=15,dictTable ="t_user",dicCode ="id",dicText ="username")
-	private java.lang.Integer userid;
+	@Excel(name="用户key",width=15)
+	private java.lang.String userKey;
 	/**网站名*/
 	@Excel(name="网站名",width=15,dictTable ="t_web",dicCode ="id",dicText ="web_name")
 	private java.lang.Integer webid;
@@ -72,17 +72,17 @@ public class TArticleEntity implements java.io.Serializable {
 	 *@return: java.lang.Integer  用户名
 	 */
 
-	@Column(name ="USERID",nullable=true,length=10)
-	public java.lang.Integer getUserid(){
-		return this.userid;
+	@Column(name ="USER_KEY",nullable=true,length=10)
+	public java.lang.String getUserKey(){
+		return this.userKey;
 	}
 
 	/**
 	 *方法: 设置java.lang.Integer
 	 *@param: java.lang.Integer  用户名
 	 */
-	public void setUserid(java.lang.Integer userid){
-		this.userid = userid;
+	public void setUserKey(java.lang.String userKey){
+		this.userKey = userKey;
 	}
 	/**
 	 *方法: 取得java.lang.Integer

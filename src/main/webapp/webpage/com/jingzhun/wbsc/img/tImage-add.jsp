@@ -17,14 +17,14 @@
 	<form class="form-horizontal" role="form" id="formobj" action="tImageController.do?doAdd" method="POST">
 		<input type="hidden" id="btn_sub" class="btn_sub"/>
 		<input type="hidden" id="id" name="id"/>
-		<div class="form-group">
-			<label for="userId" class="col-sm-3 control-label">用户名称：</label>
+		<%--<div class="form-group">
+			<label for="userKey" class="col-sm-3 control-label">用户Key：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<t:dictSelect field="userId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_user" dictField="id" dictText="username"  hasLabel="false"  title="用户名称"></t:dictSelect>     
+					<input id="userKey" name="userKey" type="text" maxlength="255" class="form-control input-sm" placeholder="请输入用户Key"  ignore="ignore" />
 				</div>
 			</div>
-		</div>
+		</div>--%>
 		<div class="form-group">
 			<label for="url" class="col-sm-3 control-label">图片：</label>
 			<div class="col-sm-7">
@@ -38,18 +38,26 @@
 			<label for="webId" class="col-sm-3 control-label">网站：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
-					<t:dictSelect field="webId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_web" dictField="id" dictText="web_name"  hasLabel="false"  title="网站"></t:dictSelect>     
+					<t:dictSelect field="webId" type="list" extendJson="{class:'form-control input-sm'}"  datatype="n"   dictTable="t_web" dictField="id" dictText="web_name"  hasLabel="false"  title="网站" defaultVal="${sessionScope.web.id}"></t:dictSelect>
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="webUsername" class="col-sm-3 control-label">网站用户名：</label>
+			<div class="col-sm-7">
+				<div class="input-group" style="width:100%">
+					<input id="webUsername" name="webUsername" value='${sessionScope.userWeb.username}' type="text" maxlength="255" class="form-control input-sm" placeholder="请输入用户名称"  ignore="ignore" />
+				</div>
+			</div>
+		</div>
+		<%--<div class="form-group">
 			<label for="webImgName" class="col-sm-3 control-label">网站图片路径：</label>
 			<div class="col-sm-7">
 				<div class="input-group" style="width:100%">
 					<input id="webImgName" name="webImgName" type="text" maxlength="255" class="form-control input-sm" placeholder="请输入网站图片路径"  ignore="ignore" />
 				</div>
 			</div>
-		</div>
+		</div>--%>
 	</form>
 	</div>
  </div>
