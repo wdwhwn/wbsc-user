@@ -1,16 +1,14 @@
 package com.jingzhun.wbsc.schedule;
 
 import com.jingzhun.wbsc.login.Login;
+import com.jingzhun.wbsc.login.config.CookieJudge;
 import com.jingzhun.wbsc.title.controller.config.ContentPush;
 import com.jingzhun.wbsc.title.entity.TArticleEntity;
 import com.jingzhun.wbsc.title.service.TArticleServiceI;
 import com.jingzhun.wbsc.util.JsonUtil;
 import com.jingzhun.wbsc.web.entity.TWebEntity;
 import org.jeecgframework.web.system.service.SystemService;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +27,11 @@ public class MyJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+//     当前调度任务的信息
+        String name = jobExecutionContext.getTrigger().getJobKey().getName();
+        log.error("第一个："+name);
+        JobDetail jobDetail = jobExecutionContext.getJobDetail();
+        log.error("第二个："+jobDetail);
         JobDataMap jdMap = jobExecutionContext.getJobDetail().getJobDataMap();
         System.out.println(jdMap.get("param"));
         String param = jdMap.get("param").toString();
@@ -45,7 +48,7 @@ public class MyJob implements Job {
         while(true) {
             try {
                 cookies = login.getCookie(tWebEntity, username, password);
-                if (cookies == null) {
+                if (!CookieJudge.chooseContentPush(tWebEntity.getIdentification(),cookies)) {
                     System.out.println("获取cookie失败");
                     continue;
                 }
@@ -56,7 +59,7 @@ public class MyJob implements Job {
                 continue;
             } catch (Exception e) {
                 e.printStackTrace();
-                log.error("服务器端出错，请联系管理员");
+                log.error("网络不稳定，请联系管理员");
                 return;
             }
         }
@@ -75,8 +78,8 @@ public class MyJob implements Job {
             }
             break;
         }
-        log.error("发布任务结果为：" + map.get("data"));
-        if ("true".equals(map.get("data"))) {
+        log.error("发布任务结果为：" + JsonUtil.toJson(map));
+        if ("success".equals(map.get("status"))) {
             //        发布任务入库
             TArticleEntity tArticleEntity = new TArticleEntity();
             tArticleEntity.setParameter(map.get("param"));

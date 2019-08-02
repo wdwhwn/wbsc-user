@@ -1,5 +1,6 @@
 package com.jingzhun.wbsc.login;
 
+import com.jingzhun.wbsc.login.config.CookieJudge;
 import com.jingzhun.wbsc.user.entity.TUserWebEntity;
 import com.jingzhun.wbsc.util.*;
 import com.jingzhun.wbsc.web.entity.TWebEntity;
@@ -62,7 +63,7 @@ public class Login extends ApiBaseAction{
             }
             break;
         }
-        if(cookies==null){
+        if(!CookieJudge.chooseContentPush(tWebEntity.getIdentification(),cookies)){
             return JsonUtil.toJson(toResponsFail("账号密码错误"));
         }
 

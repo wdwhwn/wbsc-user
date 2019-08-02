@@ -3,6 +3,8 @@ package com.jingzhun.wbsc;
 import com.jingzhun.wbsc.util.JsonUtil;
 import com.jingzhun.wbsc.util.PropertiesUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.jeecgframework.core.util.StringUtil;
@@ -17,9 +19,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 文本生成
@@ -58,7 +58,7 @@ public class TestD {
 //        jsoup 模拟登陆
         Map<String, String> cookies=new HashMap<>();
         if(str0.equals(str2)){
-            cookies= Jsoup
+            Connection.Response execute = Jsoup
                     .connect(surl)
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
@@ -66,8 +66,18 @@ public class TestD {
                     .method(Connection.Method.POST)
                     .headers(loginHeadMap)
                     .followRedirects(false)
-                    .execute()
-                    .cookies();
+                    .execute();
+            cookies=execute.cookies();
+            String body = execute.body();
+            Map<String,Map<String,Object>> map = JsonUtil.toObject(body, Map.class);
+//            ErrCode=0  则登陆成功
+            log.error(map.get("ErrorMsg").get("ErrCode")+"");
+            if(map.containsKey("ErrorMsg")&&"0".equals(map.get("ErrorMsg").get("ErrCode"))){
+                log.error("登陆成功");
+            }
+            log.error(execute.body());
+//            cookies中存在 Key newwjlogin  则登陆成功
+            log.error(cookies.containsKey("newwjlogin")+"");
             log.error("勤发布："+cookies);
         }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
@@ -102,9 +112,8 @@ public class TestD {
 
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
         }
-
      /*++++++++++++++++++第4步：信息推送+++++++++++++++++*/
-        String param3="title=上海办公设备白泉桌椅齐全123&keyWord=桌椅 白泉 设备&pics[]=//image.qinfabu.com/img/2019/7/30/20190730171859235.jpg"+
+        String param3="title=上海办种材料在吗&keyWord=桌椅 白泉 设备&pics[]=//image.qinfabu.com/img/2019/7/30/20190730171859235.jpg"+
                 "&data=为此不少网友也总结了吃各种材料在火锅中的涮的时间牙龈出血运用专业的番茄熬汤机器进行4个多小时的熬制时刻将“以顾客为中心”做为服务理念建议痊愈后再吃火锅。 在吃火锅时使用甲醛可使毛肚吃起来更脆。 先用工业烧碱浸泡有些人常常要和一些火锅汤。他们认为：很多食材的的精华都在汤里面。其实在火锅汤里有许多嘌呤和亚盐。他们的浓度都很高就得到金仔！ 金仔的锅底选用的是锅中锅 中间的是番茄汤 纯番茄熬制 吃火锅之前来碗金仔番茄汤 保护你的肠胃健康。 金仔的番茄汤是由金仔聘请拥有30多年中餐经验的周师傅熬制而成不要混合。如果在液面交界处出现紫色环将会患上胃溃疡等疾病。" +
                 "&typeid=3000101101\n" +
                 "&AttrValue[0][name]=品牌/厂家\n" +
@@ -118,13 +127,18 @@ public class TestD {
                 "&id=";
         String xxtsUrl="http://my.qinfabu.com/Product/Add";
         Map<String, String> xxtsHeadMap = PropertiesUtil.getProperties("headfile/qinfabu/qinfabu_xxts.properties");
-        if(str0.equals(str2)){
+        if(true&&str0.equals(str2)){
             Document doc = Jsoup.connect(xxtsUrl).ignoreContentType(true).ignoreHttpErrors(true)
                     .headers(xxtsHeadMap)
                     .cookies(cookies)
                     .requestBody(param3)
                     .post();
-            System.out.println("结果为："+doc);
+//            成功时  {"ErrorMsg":{"ErrCode":0,"ErrMsg":""},"Data":"3a062100-f9e6-4232-b117-a4df8e0cf4c9"}
+            log.error(doc.toString());
+            Map<String,Map<String,Object>> map=JsonUtil.toObject(doc.body().text(),Map.class);
+            if(!"0".equals(map.get("ErrorMsg").get("ErrCode"))) {
+                System.out.println("结果为：" + map.get("ErrorMsg").get("ErrMsg"));
+            }
         }
         /*++++++++++++++++++第3步：图片上传+++++++++++++++++*/
        String imgUploadUrl="http://my.qinfabu.com/Upload/Upload";
@@ -135,7 +149,7 @@ public class TestD {
         stringStringHashMap.put("type","image/jpeg");
         stringStringHashMap.put("lastModifiedDate","Fri Jul 26 2019 17:20:12 GMT+0800");
         stringStringHashMap.put("size","10001");
-        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\123.jpg");
+        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\789.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         if(false&&str0.equals(str2)){
             Document doc = Jsoup.connect(imgUploadUrl).ignoreContentType(true).ignoreHttpErrors(true)
@@ -144,7 +158,9 @@ public class TestD {
                     .data("file", file.getName(), fileInputStream)
                     .data(stringStringHashMap)
                     .post();
+//            成功时  {"err":"1","msg":"//image.qinfabu.com/img/2019/7/30/20190730125137702.jpg"}
             String text = doc.text();
+            System.out.println(text);
             Map map = JsonUtil.toObject(text, Map.class);
             Object msg = map.get("msg");
 //            //image.qinfabu.com/img/2019/7/30/20190730125137702.jpg
@@ -155,6 +171,7 @@ public class TestD {
 
     /**
      * 东方供应网-成功  查询结果，需要20条才可以看到结果
+     * 标题可以添加  省份  不能添加 市
      */
     @Test
     public void test2() throws IOException {
@@ -173,14 +190,18 @@ public class TestD {
         }
         Map<String, String> cookies1=new HashMap<>();
         if(str0.equals(str2)){
-            cookies1= Jsoup
+            Connection.Response execute = Jsoup
                     .connect(surl)
                     .requestBody(param)
                     .method(Connection.Method.POST)
                     .followRedirects(false)
                     .headers(loginHeadMap)
-                    .execute()
-                    .cookies();
+                    .execute();
+//            成功是为空，失败时提示用户名或密码错误
+            log.error(execute.body());
+            cookies1 = execute.cookies();
+//            包含u则登陆成功
+            log.error(cookies1.containsKey("u")+"");
             log.error("东方供应网模拟登录成功："+cookies1);
         }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
@@ -201,7 +222,7 @@ public class TestD {
         HashMap<String, String> stringStringHashMap = new HashMap<>();
         stringStringHashMap.put("PHP_SESSION_UPLOAD_PROGRESS","upload_img");
         stringStringHashMap.put("sort_id","");
-        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\456.jpg");
+        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\789.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         Map<String, String> xxtsHeadMap1 = PropertiesUtil.getProperties("headfile/qinfabu/eastsoo_uploadimg.properties");
         if(false&&str0.equals(str2)){
@@ -211,7 +232,10 @@ public class TestD {
                     .data(stringStringHashMap)
                     .data("file", file.getName(), fileInputStream)
                     .post();
+//            成功时 {"status":"ok","message":["8950472","http:\/\/img.eastsoo.com\/eastsoo\/193\/3864124919\/small_2019-08-02-17-51-30-4920.jpg"],"id":null}
+//            包含ok
             String file1 = doc.text();
+            log.error(file1);
             Map<String,List<String>> map = JsonUtil.toObject(file1, Map.class);
             System.out.println(file1);
             List<String> message = map.get("message");
@@ -223,7 +247,7 @@ public class TestD {
        /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
         String url="http://user.eastsoo.com/biz/business_add.do?cmd=submit&ajax_submit_random=0.09541667255170852 ";
-        String parma="title=测试东阳亲朋好选择酒水&pic_id=8948162&sort_id=10111078&sort_custom_id=&content=公司提供中餐、西餐及食材的加工和销售，餐饮管理公司是掌握管理技能和独特技术、运用品牌、专利和服务优势，开展餐饮运营的经济组织。餐饮管理公司的组织机构一般采用职能部制，只有开展连锁经营业务的公司，采取事业部制&unit=件&num=5&price_w=96&num_w=20&id=0&status=0&price=100";
+        String parma="title=河北测试东阳好选择酒水&pic_id=8948162&sort_id=10111078&sort_custom_id=&content=公司提供中餐、西餐及食材的加工和销售，餐饮管理公司是掌握管理技能和独特技术、运用品牌、专利和服务优势，开展餐饮运营的经济组织。餐饮管理公司的组织机构一般采用职能部制，只有开展连锁经营业务的公司，采取事业部制&unit=件&num=5&price_w=96&num_w=20&id=0&status=0&price=100";
       /*++++++++++++++++++第3步：信息推送+++++++++++++++++*/
         if(false&&str0.equals(str1)&&cookie!=null){
             sendPost1(url, parma, cookie);
@@ -238,8 +262,15 @@ public class TestD {
                    .requestBody(parma)
                    .followRedirects(false)
                    .cookies(cookies1).headers(xxtsHeadMap);
-           String cookie1=connection .post().text();
-           System.out.println(cookie1);
+//           失败  {"status":"err","message":"\u6807\u9898\u5df2\u5b58\u5728","id":null}
+//           成功  {"status":"ok","message":"","id":null}
+           String text=connection .post().text();
+           System.out.println(text);
+           Map<String,String> map = JsonUtil.toObject(text, Map.class);
+           if(!"ok".equals(map.get("status"))){
+                log.error(map.get("message"));
+           }
+//           System.out.println(text);
        }
        /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
     }
@@ -318,6 +349,7 @@ public class TestD {
 
     /**
      *  搜好货网-成功  发布信息需要：营业执照、身份证、企业授权申明
+     *  需要知道加密方式   登陆时密码
      */
     @Test
     public void test3() throws IOException {
@@ -334,7 +366,7 @@ public class TestD {
         Map<String,String> cookies=null;
         Map<String, String> properties = PropertiesUtil.getProperties("headfile/souhaohuo/souhaohuo_login.properties");
         if(str0.equals(str2)){
-          cookies = Jsoup
+            Connection.Response execute = Jsoup
                     .connect(surl)
                     .requestBody(param)
                     .ignoreContentType(true)
@@ -342,8 +374,17 @@ public class TestD {
                     .method(Connection.Method.POST)
                     .headers(properties)
                     .followRedirects(false)
-                    .execute()
-                    .cookies();
+                    .execute();
+            cookies =  execute .cookies();
+//            成功是为空，失败时显示网页内容
+            log.error(execute.body());
+//            登陆成功时需要包含：_current_user_id；  _login_id；  _current_login_number
+            log.error(cookies.containsKey("_current_user_id")+"");
+            log.error(cookies.containsKey("_login_id")+"");
+            log.error(cookies.containsKey("_current_login_number")+"");
+//            {_current_session_id=_current_session_id_fc70e300-b19d-46fe-8f38-2176154e1f2f, _currentUrl=http://www.912688.com/login.html, _login_id=loginId_571ab50d-e247-4ed6-83af-de9a9399943a, _current_user_id=12117624, _current_login_number=0}
+//            失败 {_current_session_id=_current_session_id_2b8ef652-b155-4f2b-8f54-a3a6a7d75dd5, _currentUrl=http://www.912688.com/login.html, _current_login_number=1}
+            log.error(cookies.toString());
         }
        /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -394,7 +435,7 @@ public class TestD {
         Map<String,String> cookies=new HashMap<String,String>();
         Map<String,String> loginHeadMap= PropertiesUtil.getProperties("headfile/shengyibao/shengyibao_login.properties");
         if(str0.equals(str2)){
-            cookies = Jsoup
+            Connection.Response execute = Jsoup
                     .connect(surl)
                     .headers(loginHeadMap)
                     .method(Connection.Method.POST)
@@ -402,17 +443,23 @@ public class TestD {
                     .requestBody(param)
                     .followRedirects(false)
                     .timeout(600000)
-                    .execute()
-                    .cookies();
+                    .execute();
+
+           cookies = execute.cookies();
+//          失败时  {PHPSESSID=1h4p4ib53sn8ieaqhetadnl1j3}
+//        成功时   {PHPSESSID=qhgbdn5nc3l4l2gqdqcippi440, member_LOGIN_USER_ID=10146698, member_LOGIN_USER=wdwhwn}
+            log.error(cookies.containsKey("member_LOGIN_USER_ID")+"");
+            log.error(cookies.containsKey("member_LOGIN_USER")+"");
+           log.error(cookies.toString());
         }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 //      上传图片
         String imgUrl="http://www.i.album.toocle.com/api//?f=image_upload_leads";
         Map<String,String> imgHeadMap= PropertiesUtil.getProperties("headfile/shengyibao/shengyibao_imgupload.properties");
-        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\123.jpg");
+        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\789.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         HashMap<String, String> uploadRequestMap = new HashMap<>();
-        uploadRequestMap.put("login_id","10146698");
+        uploadRequestMap.put("login_id","56466982");
         if(false&&str0.equals(str2)){
           Document doc  = Jsoup.connect(imgUrl).ignoreHttpErrors(true).ignoreContentType(true)
                     .headers(imgHeadMap)
@@ -421,6 +468,9 @@ public class TestD {
                     .data(uploadRequestMap)
                     .post();
             String pic = doc.text();
+//            成功时 {"exp":"successful","msg":"2019\/08\/02\/a5\/5d44084244da5.jpg","type":"image","name":"123.jpg"}
+//            包含successful
+            System.out.println(pic);
             Map map = JsonUtil.toObject(pic, Map.class);
             Object msg = map.get("msg");
 //            http://my.i.album.toocle.com/100-100-0-1/2019/07/30/9b/5d3fd0f57e89b.jpg
@@ -452,15 +502,18 @@ public class TestD {
 
         /*++++++++++++++++++第步：信息推送+++++++++++++++++*/
         String xxtsUrl="http://leads.toocle.com/?_a=main&f=trade_create ";
-        String xxtsParam="&category=13&intro= 供应餐具&title=海南诚德丰餐饮优惠批发&info=&type=2&pic1=2019/07/26/e1/5d3ac64a492e1.jpg&pic2=&pic3=&cate_id=&sign=1917c7190e2113fd472143960dd2135b";
+        String xxtsParam="&category=13&intro= 供应餐具12&title=诚德丰餐饮亲朋聚会好去处&info=&type=2&pic1=2019/07/26/e1/5d3ac64a492e1.jpg&pic2=&pic3=&cate_id=&sign=1917c7190e2113fd472143960dd2135b";
         Map<String, String> xxtsMap = PropertiesUtil.getProperties("headfile/souhaohuo/shengyibao_xxts.properties");
-        if(false&&str0.equals(str2)){
+        if(true&&str0.equals(str2)){
             Document post = Jsoup.connect(xxtsUrl).ignoreContentType(true).ignoreHttpErrors(true)
                     .headers(xxtsMap)
                     .cookies(cookies)
                     .requestBody(xxtsParam)
                     .post();
 //            System.out.println(post);
+            log.error(post.toString());
+//            成功 <span class="red3">添加成功，等待审核！</span>
+//            失败  <span class="red3">请不要重复发布！</span>
             String text = post.select("span[class=red3]").text();
             System.out.println("结果为："+text);
         }
@@ -468,7 +521,7 @@ public class TestD {
         String resultListUrl="http://leads.toocle.com/list.html";
         Map<String, String> resultListMap = PropertiesUtil.getProperties("headfile/souhaohuo/shengyibao_resultlist.properties");
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
-        if(true&&str0.equals(str2)){
+        if(false&&str0.equals(str2)){
             Document document = Jsoup.connect(resultListUrl).ignoreHttpErrors(true).ignoreContentType(true)
                     .cookies(cookies)
                     .headers(resultListMap)
@@ -509,8 +562,14 @@ public class TestD {
         Map<String,String> loginHeadMap=PropertiesUtil.getProperties("headfile/dianzishangwu/dianzishangwu_login.properties");
         Map<String, String> cookies = new HashMap<>();
         if(str0.equals(str2)){
-            cookies = Jsoup.connect(surl).ignoreHttpErrors(true).ignoreHttpErrors(true).followRedirects(false)
-                    .headers(loginHeadMap).requestBody(param).method(Connection.Method.POST).execute().cookies();
+            Connection.Response execute = Jsoup.connect(surl).ignoreHttpErrors(true).ignoreHttpErrors(true).followRedirects(false)
+                    .headers(loginHeadMap).requestBody(param).method(Connection.Method.POST).execute();
+            cookies =execute.cookies();
+//            失败时  {yunsuo_session_verify=62478d61ab7347c88dd0145419edfcd0}
+//            成功时  {yunsuo_session_verify=62478d61ab7347c88dd0145419edfcd0, DC1_auth=ecd1AN33E2K4xlvN2vHCjCDBsq-P--P-68jUrLVqc9xqroW3wdWMngbG30clBA6aoGPQUD-S-QQt6L-P-VkxhYEdUp3d-S-0M0-S-0Lmtlw-E-, DC1_username=hnjzsoft}
+            log.error(cookies.containsKey("DC1_auth")+"");
+            log.error(cookies.containsKey("DC1_username")+"");
+            log.error(cookies.toString());
         }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -539,7 +598,7 @@ public class TestD {
         objectObjectHashMap.put("remote","http://");
         objectObjectHashMap.put("width","100");
         objectObjectHashMap.put("height","100");
-        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\123.jpg");
+        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\789.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         Map<String, String> properties2 = PropertiesUtil.getProperties("headfile/dianzishangwu/dianzishangwu_imgupload.properties");
           if(false&&str0.equals(str2)){
@@ -549,10 +608,16 @@ public class TestD {
                       .data("upalbum", file.getName(), fileInputStream)
                       .data(objectObjectHashMap)
                       .post();
+              log.error(upalbum.toString());
               String script = upalbum.body().select("script").get(0).toString();
-              String substring = script.substring(script.indexOf("(")+2, script.indexOf(",")-1);
+//              失败时  alert('Error(2)没有权限上传文件');</script>
+              log.error(script);
+              log.error(!script.contains("Error")+"");
+              if(!script.contains("Error")) {
+                  String substring = script.substring(script.indexOf("(") + 2, script.indexOf(",") - 1);
 //              http://www.cebn.cn/file/upload/201907/30/14150172377370.jpg.thumb.jpg
-              System.out.println(substring);
+                  System.out.println(substring);
+              }
           }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -566,7 +631,7 @@ public class TestD {
 //                0_供应  1_提供服务  2_提供二手 3_提供加工  4_提供合作  5_库存
                 "&post[typeid]=0&" +
 //                标题
-                "post[title]=供应恒亿盛世白酒系列123456" +
+                "post[title]=1234供应恒亿盛世白酒系列56" +
                 "&color=" +
 //                类别
                 "&post[catid]=72441" +
@@ -601,7 +666,7 @@ public class TestD {
                 "&post[elite]=0" +
                 "&submit= 提 交";
         Map<String, String> properties3 = PropertiesUtil.getProperties("headfile/dianzishangwu/dianzishangwu_xxts.properties");
-        if(false&&str0.equals(str2)){
+        if(true&&str0.equals(str2)){
             Document post = Jsoup.connect(xxtsUrl).cookies(cookies)
                     .ignoreHttpErrors(true)
                     .ignoreContentType(true)
@@ -609,7 +674,10 @@ public class TestD {
 //                    .followRedirects(false)
                     .requestBody(param3)
                     .post();
-            System.out.println(post);
+//        失败时    alert('您所在的会员组没有权限使用此功能，请升级');window.history.back();
+//        失败      alert('余额不足')
+            String script = post.body().select("script").toString();
+            System.out.println(script.substring(script.indexOf("alert"),script.lastIndexOf(";")));
         }
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -617,7 +685,7 @@ public class TestD {
         String resultUrl="http://www.cebn.cn/member/my.php?mid=5";
         Map<String, String> properties4 = PropertiesUtil.getProperties("headfile/dianzishangwu/dianzishangwu_resultlist.properties");
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
-        if(true&&str0.equals(str2)){
+        if(false&&str0.equals(str2)){
             Document document = Jsoup.connect(resultUrl).ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .headers(properties4)
@@ -685,7 +753,7 @@ public class TestD {
         String str1="urlConnection";
         String str2="jsoup";
         /*++++++++++++++++++第1步：模拟登录+++++++++++++++++*/
-        String surl="http://my.cn.c-c.com/member/signin.aspx?d=0.41923915246532784";
+        String surl="http://my.cn.c-c.com/member/signin.aspx?d=0.41923915246534584";
         String param="Type=Login1&UserName=hnjzsoft&PassWord=hnjz123soft&isSavePwd=0&SUrl&XC=XXXXXZZZXX";
         String cookie="";
         if(str0.equals(str1)) {
@@ -695,8 +763,14 @@ public class TestD {
         Map<String,String> loginHeadMap=PropertiesUtil.getProperties("headfile/zhizaojiaoyi/zhizaojiaoyi_login.properties");
         /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
         if(str0.equals(str2)){
-            cookies= Jsoup.connect(surl).ignoreContentType(true).ignoreHttpErrors(true)
-                    .headers(loginHeadMap).requestBody(param).method(Connection.Method.POST).execute().cookies();
+            Connection.Response execute = Jsoup.connect(surl).ignoreContentType(true).ignoreHttpErrors(true)
+                    .headers(loginHeadMap).requestBody(param).timeout(3000).method(Connection.Method.POST).execute();
+            cookies= execute.cookies();
+//              当账号错误的时候，会链接超时  java.net.SocketTimeoutException: Read timed out
+//            账号正确，密码错误，cookies为空
+//            成功时  {WebClient=IvKXCWoNreZt/HDQxk2akJLsRo5sNrRkUJ2vyHOYjgZf3YsMjyxLuQqxbR7ls3erNWDcegNnwQieILR3Hsouub+kYk863p90elNebCNaJEkdYzTntIT7SzarWsiCYYrPWeSHC6m4omTbGYt/eJRkNRXa3oMIeoLT}
+            log.error(cookies.toString());
+            log.error(cookies.containsKey("WebClient")+"");
         }
         /*++++++++++++++++++第2步：个人中心+++++++++++++++++*/
         String url="http://myv2.cn.c-c.com/member/smrz/";
@@ -713,7 +787,7 @@ public class TestD {
 
        /*++++++++++++++++++第步：判断图片是否存在+++++++++++++++++*/
         String imgCheck="http://myv2.cn.c-c.com/api/ImgUpload/md5Check";
-        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\cde.jpg");
+        File file = new File("E:\\jeecg\\wdwhwn-master\\wbsc-user\\src\\main\\resources\\789.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         String s = DigestUtils.md5Hex(fileInputStream);
         System.out.println(s);
@@ -742,7 +816,7 @@ public class TestD {
         Map<String,String> imguploadHeadMap=PropertiesUtil.getProperties("headfile/zhizaojiaoyi/zhizaojiaoyi_imgupload.properties");
         HashMap<String, String> stringStringHashMap = new HashMap<>();
 //       动态
-        stringStringHashMap.put("md5","MD5");
+        stringStringHashMap.put("md5",System.currentTimeMillis()+"");
         System.out.println("md5:"+(s+1));
         stringStringHashMap.put("btnId","");
         stringStringHashMap.put("isW","1");
@@ -754,14 +828,16 @@ public class TestD {
 //        必须重新 生成输入流，经过md5后的输入流已经改变
         FileInputStream fileInputStream1 = new FileInputStream(file);
 //        if(true&&map.get("ifExist").toString().equals("false")&&str0.equals(str2)){
-        if(true&&str0.equals(str2)){
-            System.out.println("上传");
+        if(false&&str0.equals(str2)){
             Document post = Jsoup.connect(imgUrl).ignoreHttpErrors(true).ignoreContentType(true)
                     .cookies(cookies)
                     .headers(imguploadHeadMap)
                     .data("file",file.getName(),fileInputStream1)
                     .data(stringStringHashMap)
                     .post();
+//            成功时  {"jsonrpc":"2.0","id":"WU_FILE_0","error":{"code":0,"message":"上传成功"},"result":"/NTimg/2019/08/02/18/1564740059856.jpg"}
+//            包含字符串“上传成功”
+            log.error(post.toString());
             Map map1 = JsonUtil.toObject(post.text(), Map.class);
             String result = map1.get("result").toString();
             StringBuilder sb = new StringBuilder("http://img.c-c.com/");
@@ -857,14 +933,16 @@ public class TestD {
                 "&X9831261=625178" +
                 "&X-Requested-With=XMLHttpRequest";
         Map<String,String> xxtsHeadMap=PropertiesUtil.getProperties("headfile/zhizaojiaoyi/zhizaojiaoyi_xxts.properties");
-        if(false&str0.equals(str2)){
+        if(true&str0.equals(str2)){
             Document post = Jsoup.connect(xxfbUrl).ignoreHttpErrors(true)
                     .ignoreContentType(true)
                     .headers(xxtsHeadMap)
                     .cookies(cookies)
                     .requestBody(param3)
                     .post();
-            System.out.println(post);
+//            成功时   <body>1|140034139</body>
+//             失败时
+            System.out.println(post.text());
 
         }
 
@@ -1573,5 +1651,35 @@ public class TestD {
         System.out.println(properties.get("img-url"));
     }
 
-
+    /**
+     * 将json字符串转为Map结构
+     * 如果json复杂，结果可能是map嵌套map
+     * @param jsonStr 入参，json格式字符串
+     * @return 返回一个map
+     */
+    public static Map<String, Object> json2Map(String jsonStr) {
+        Map<String, Object> map = new HashMap<>();
+        if(jsonStr != null && !"".equals(jsonStr)){
+            //最外层解析
+            JSONObject json = JSONObject.fromObject(jsonStr);
+            for (Object k : json.keySet()) {
+                Object v = json.get(k);
+                //如果内层还是数组的话，继续解析
+                if (v instanceof JSONArray) {
+                    List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                    Iterator<JSONObject> it = ((JSONArray) v).iterator();
+                    while (it.hasNext()) {
+                        JSONObject json2 = it.next();
+                        list.add(json2Map(json2.toString()));
+                    }
+                    map.put(k.toString(), list);
+                } else {
+                    map.put(k.toString(), v);
+                }
+            }
+            return map;
+        }else{
+            return null;
+        }
+    }
 }

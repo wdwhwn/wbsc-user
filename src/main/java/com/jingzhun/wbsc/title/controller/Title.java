@@ -3,6 +3,7 @@ package com.jingzhun.wbsc.title.controller;
 import com.jingzhun.wbsc.category.entity.TCategoryEntity;
 import com.jingzhun.wbsc.configuration.entity.TLocationEntity;
 import com.jingzhun.wbsc.img.entity.TImageEntity;
+import com.jingzhun.wbsc.login.config.CookieJudge;
 import com.jingzhun.wbsc.schedule.MyJob;
 import com.jingzhun.wbsc.schedule.QuartzManager;
 import com.jingzhun.wbsc.title.controller.config.ContentPush;
@@ -70,10 +71,10 @@ public class Title {
 
         HttpSession session = request.getSession();
 
-        Object cookies = session.getAttribute("cookies");
+        Map<String,String> cookies =(Map<String,String>) session.getAttribute("cookies");
         TWebEntity web = (TWebEntity) session.getAttribute("web");
 
-        if(cookies==null){
+        if(!CookieJudge.chooseContentPush(web.getIdentification(),cookies)){
             return new ModelAndView("com/jingzhun/wbsc/title/error");
         }
         String identification = web.getIdentification();
@@ -97,7 +98,6 @@ public class Title {
                 tCategoryEntities.add(categoryEntity);
             }
             /*+++++++++++++++++++++++++++END++++++++++++++++++++++++++++++++++++++++++++*/
-
             /*++++++++++++++++++第2步：将数据存储到map中+++++++++++++++++*/
             List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
             Map<String, Object> map = null;
@@ -495,12 +495,12 @@ public class Title {
         }
 //        获取对应的name
         String imgUploadName = tWebEntity.getImgUploadName();
-
-        if(session.getAttribute("cookies")==null){
+        Map<String,String> cookies=(Map<String,String>)session.getAttribute("cookies");
+        if(!CookieJudge.chooseContentPush(identification,cookies)){
             j.setMsg("其重新登陆");
             return j;
         }
-        Map<String, String> cookies = (Map<String, String>) session.getAttribute("cookies");
+//        Map<String, String> cookies = (Map<String, String>) session.getAttribute("cookies");
         log.error("cookieVal: " + cookies);
         List<String> imgList = new ArrayList<String>();
         /*++++++++++++++++++第1步：判断图片是否已被上传到web中+++++++++++++++++*/

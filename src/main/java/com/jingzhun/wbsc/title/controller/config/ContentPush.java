@@ -113,10 +113,11 @@ public class ContentPush {
                 .post();
         String text = doc.text();
         System.out.println("text:"+text);
-        String s = "true";
+        Map<String, String> resultMap = ContentPushJudge.chooseContentPush(identification, doc);
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("param", replaceParam);
-        map.put("data", s);
+        map.put("status", resultMap.get("status"));
+        map.put("message",resultMap.get("message"));
         return map;
     }
 
@@ -175,10 +176,11 @@ public class ContentPush {
                 .post();
         String text = doc.text();
         System.out.println("信息发布结果为:"+text);
-        String s = "true";
+        Map<String, String> resultMap = ContentPushJudge.chooseContentPush(identification, doc);
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("param", replaceParam);
-        map.put("data", s);
+        map.put("status", resultMap.get("status"));
+        map.put("message",resultMap.get("message"));
         return map;
     }
 
@@ -231,9 +233,11 @@ public class ContentPush {
         String text = doc.text();
         log.error("信息发布结果为:"+text);
         String s = "true";
+        Map<String, String> resultMap = ContentPushJudge.chooseContentPush(identification, doc);
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("param", replaceParam);
-        map.put("data", s);
+        map.put("status", resultMap.get("status"));
+        map.put("message",resultMap.get("message"));
         return map;
     }
 
@@ -309,9 +313,11 @@ public class ContentPush {
         log.error(doc.toString());
         log.error("信息发布结果为:"+text);
         String s = "true";
+        Map<String, String> resultMap = ContentPushJudge.chooseContentPush(identification, doc);
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("param", replaceParam);
-        map.put("data", s);
+        map.put("status", resultMap.get("status"));
+        map.put("message",resultMap.get("message"));
         return map;
     }
 
@@ -423,9 +429,11 @@ public class ContentPush {
         log.error(doc.toString());
         log.error("信息发布结果为:"+text);
         String s = "true";
+        Map<String, String> resultMap = ContentPushJudge.chooseContentPush(identification, doc);
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("param", replaceParam);
-        map.put("data", s);
+        map.put("status", resultMap.get("status"));
+        map.put("message",resultMap.get("message"));
         return map;
     }
 }

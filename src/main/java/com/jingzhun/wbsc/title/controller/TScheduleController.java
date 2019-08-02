@@ -1,4 +1,5 @@
 package com.jingzhun.wbsc.title.controller;
+import com.jingzhun.wbsc.login.config.CookieJudge;
 import com.jingzhun.wbsc.schedule.QuartzManager;
 import com.jingzhun.wbsc.title.entity.TScheduleEntity;
 import com.jingzhun.wbsc.title.service.TScheduleServiceI;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.jingzhun.wbsc.web.entity.TWebEntity;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +76,9 @@ public class TScheduleController extends BaseController {
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		Object cookies = session.getAttribute("cookies");
-		if(cookies==null){
+		Map<String,String> cookies = (Map<String,String>)session.getAttribute("cookies");
+		TWebEntity tWebEntity=(TWebEntity)session.getAttribute("web");
+		if(!CookieJudge.chooseContentPush(tWebEntity.getIdentification(),cookies)){
 			return new ModelAndView("com/jingzhun/wbsc/title/error");
 		}
 		return new ModelAndView("com/jingzhun/wbsc/title/tScheduleList");
