@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecgframework.core.beanvalidator.BeanValidators;
 import org.jeecgframework.core.common.controller.BaseController;
@@ -66,6 +67,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/tsBlackListController")
 @Api(value = "测试用黑名单服务", description = "测试用黑名单服务接口", tags = "sysBlackAPI")
+@Slf4j
 public class TsBlackListController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(TsBlackListController.class);
 	
@@ -85,6 +87,8 @@ public class TsBlackListController extends BaseController {
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
+
+		log.error("测试接口");
 		return new ModelAndView("jeecg/black/tsBlackListList");
 	}
 

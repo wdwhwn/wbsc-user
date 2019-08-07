@@ -74,7 +74,7 @@ public class Title {
         Map<String,String> cookies =(Map<String,String>) session.getAttribute("cookies");
         TWebEntity web = (TWebEntity) session.getAttribute("web");
 
-        if(!CookieJudge.chooseContentPush(web.getIdentification(),cookies)){
+        if(web==null||!CookieJudge.chooseContentPush(web.getIdentification(),cookies)){
             return new ModelAndView("com/jingzhun/wbsc/title/error");
         }
         String identification = web.getIdentification();

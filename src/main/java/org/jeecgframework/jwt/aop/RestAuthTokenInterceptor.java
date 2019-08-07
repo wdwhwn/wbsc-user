@@ -5,11 +5,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jeecgframework.core.util.oConvertUtils;
 import org.jeecgframework.jwt.def.JwtConstants;
 import org.jeecgframework.jwt.model.TokenModel;
@@ -26,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 2015/7/30.
  */
 @Component
+@Slf4j
 public class RestAuthTokenInterceptor implements  HandlerInterceptor {
 
 	@Autowired
@@ -38,8 +42,11 @@ public class RestAuthTokenInterceptor implements  HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
+		String url = request.getRequestURI().toString();
 		String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+		log.error("拦截器中请求路径requestPath：" + url);
 		if(requestPath.indexOf("/rest/")==-1 || excludeUrls.contains(requestPath) ||moHuContain(excludeContainUrls, requestPath)){
+			System.out.println("rest拦截器通过");
 			return true;
 		}
 		

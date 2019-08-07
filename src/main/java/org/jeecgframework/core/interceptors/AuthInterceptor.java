@@ -83,8 +83,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 		
 		//针对拦截器排除URLS，进行排除
 		if (excludeUrls.contains(requestPath)) {
+			logger.error("登陆拦截器通过");
 			return true;
 		} else if(moHuContain(excludeContainUrls, requestPath)){
+
 			return true;
 		} else {
 			Client client = clientManager.getClient(ContextHolderUtils.getSession().getId());

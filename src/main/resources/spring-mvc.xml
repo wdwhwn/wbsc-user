@@ -23,8 +23,7 @@
 	<bean class="org.jeecgframework.web.system.service.impl.RedisCacheService"/>
 	-->
 	<bean class="org.jeecgframework.web.system.service.impl.EhcacheService"/>
-	
-	
+
 	<!-- Swagger支持（暂时注释掉提高平台性能，需要此功能，可以放开注释）
 	<context:component-scan base-package="springfox"/>
 	<bean class="org.jeecgframework.core.swagger.SwaggerConfig" /> 
@@ -120,7 +119,8 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<bean class="org.jeecgframework.core.interceptors.EncodingInterceptor" />
+			<bean class="org.jeecgframework.core.interceptors.EncodingInterceptor" >
+			</bean>
 		</mvc:interceptor>
 		<!-- [接口方案一] API 接口验签拦截器 ，签名统一校验（暂时注释掉提高平台性能，需要此功能，可以放开注释） 
 		<mvc:interceptor>
@@ -130,15 +130,23 @@
 		<!-- [接口方案二] JWT Token校验方式拦截器，针对Restful请求接口 -->
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
+			<!--<mvc:exclude-mapping path="/rest/wxpay/callBack"/>-->
 			<bean class="org.jeecgframework.jwt.aop.RestAuthTokenInterceptor">
-			    <property name="excludeUrls">
+				<!--必须包含-->
+				<property name="excludeUrls">
 					<list>
 						<value>/rest/v2/api-docs</value>
+						<!--支付回调函数-->
+						<value>/rest/pay/wxCallBack</value>
+						<value>/rest/pay/aliNotify</value>
+						<value>/rest/pay/aliReturn</value>
 					</list>
 				</property>
+				<!--模糊匹配-->
 				<property name="excludeContainUrls">
 					<list>
 						<value>/rest/tokens</value>
+						<!--<value>/rest/wxpay/callBack</value>-->
 					</list>
 				</property>
 			</bean>
@@ -147,6 +155,8 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<bean class="org.jeecgframework.core.interceptors.AuthInterceptor">
+
+				<!--精确匹配排除URLS-->
 				<property name="excludeUrls">
 					<list>
 						<value>loginController.do?goPwdInit</value>
@@ -176,6 +186,11 @@
 						<value>timeTaskController.do?remoteTask</value>
 						<!-- swagger支持  -->
 						<value>rest/v2/api-docs</value>
+						<!--支付回调函数-->
+						<value>/rest/pay/wxCallBack</value>
+						<value>/rest/pay/aliNotify</value>
+						<value>/rest/pay/aliReturn</value>
+
 					</list>
 				</property>
 				<!-- 模糊匹配 -->

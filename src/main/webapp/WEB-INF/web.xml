@@ -33,7 +33,6 @@
 		<filter-name>openSessionInViewFilter</filter-name>
 		<url-pattern>/rest/*</url-pattern>
 	</filter-mapping>
-
 	<filter>
 		<description>字符集过滤器</description>
 		<filter-name>encodingFilter</filter-name>
@@ -90,7 +89,6 @@
 		<description>在线用户监听器</description>
 		<listener-class>org.jeecgframework.web.system.listener.OnlineListener</listener-class>
 	</listener>
-
 	<servlet>
 		<description>spring mvc servlet</description>
 		<servlet-name>springMvc</servlet-name>

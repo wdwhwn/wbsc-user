@@ -167,6 +167,10 @@
           <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-util:8.1.15.v20140411" />
           <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-io:8.1.15.v20140411" />
           <element id="library" level="project" name="Maven: org.eclipse.jetty:jetty-http:8.1.15.v20140411" />
+          <element id="library" level="project" name="Maven: com.google.zxing:core:3.2.1" />
+          <element id="library" level="project" name="Maven: com.google.zxing:javase:3.2.1" />
+          <element id="library" level="project" name="Maven: com.beust:jcommander:1.48" />
+          <element id="library" level="project" name="Maven: com.alipay.sdk:alipay-sdk-java:3.7.26.ALL" />
         </element>
       </element>
       <element id="directory" name="META-INF">

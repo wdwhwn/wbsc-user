@@ -31,7 +31,6 @@ public class MyJob implements Job {
         String name = jobExecutionContext.getTrigger().getJobKey().getName();
         log.error("第一个："+name);
         JobDetail jobDetail = jobExecutionContext.getJobDetail();
-        log.error("第二个："+jobDetail);
         JobDataMap jdMap = jobExecutionContext.getJobDetail().getJobDataMap();
         System.out.println(jdMap.get("param"));
         String param = jdMap.get("param").toString();

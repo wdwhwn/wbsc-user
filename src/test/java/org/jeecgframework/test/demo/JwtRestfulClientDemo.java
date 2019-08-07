@@ -17,8 +17,7 @@ public class JwtRestfulClientDemo {
 		String token= JwtHttpUtil.httpRequest(url, "POST", null);
 		return token;
 	}
-	
-	
+
 	//获取黑名单列表
 	public static JSONObject getBlackList(String token){
 		String url = "http://localhost:8080/jeecg/rest/tsBlackListController";
@@ -28,7 +27,7 @@ public class JwtRestfulClientDemo {
 	
 	//创建黑名单
 	public static JSONObject createBlackList(String token,String json){
-		String url = "http://localhost:8080/jeecg/rest/tsBlackListController";
+		String url = "http://localhost:8083/jeecg/rest/tsBlackListController";
 		JSONObject resp= JwtHttpUtil.httpRequest(url, "POST", json,token);
 		return resp;
 	}
@@ -36,7 +35,7 @@ public class JwtRestfulClientDemo {
 	
 	//更新黑名单
 	public static JSONObject updateBlackList(String token,String json){
-		String url = "http://localhost:8080/jeecg/rest/tsBlackListController";
+		String url = "http://localhost:8083/jeecg/rest/tsBlackListController";
 		JSONObject resp= JwtHttpUtil.httpRequest(url, "PUT", json,token);
 		return resp;
 	}
@@ -44,7 +43,7 @@ public class JwtRestfulClientDemo {
 	
 	//删除黑名单
 	public static JSONObject deleteBlackList(String token,String id){
-		String url = "http://localhost:8080/jeecg/rest/tsBlackListController/"+id;
+		String url = "http://localhost:8083/jeecg/rest/tsBlackListController/"+id;
 		JSONObject resp= JwtHttpUtil.httpRequest(url, "DELETE", null,token);
 		return resp;
 	}
@@ -58,10 +57,9 @@ public class JwtRestfulClientDemo {
 	
 	
 	public static void main(String[] args) {
-		String token = getToken("admin","123456");
+		String token = getToken("wdwhwn","123456");
 		System.out.println(" token : "+ token);
 //		String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZG1pbiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNTExODU5NjM2fQ.Emfe8VZKA_L33jaW8ZUtVFVDEin83Np_d3gKlPIZryE";
-		
 		//添加黑名单
 //		JSONObject jsonObject=new JSONObject();
 //		jsonObject.put("ip","192.168.1.2");
@@ -78,5 +76,4 @@ public class JwtRestfulClientDemo {
 		//获取黑名单列表
 		System.out.println("======获取黑名单列表======="+getBlackList(token));
 	}
-
 }

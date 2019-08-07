@@ -149,7 +149,7 @@
     <orderEntry type="module-library">
       <library name="Maven: org.freemarker:freemarker:2.3.19">
         <CLASSES>
-          <root url="jar://D:/wd/maven/maven/org/freemarker/freemarker/2.3.19/freemarker-2.3.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/freemarker/freemarker/2.3.19/freemarker-2.3.19.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -257,5 +257,9 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.15.v20140411" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.15.v20140411" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.15.v20140411" level="project" />
+    <orderEntry type="library" name="Maven: com.google.zxing:core:3.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.zxing:javase:3.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.beust:jcommander:1.48" level="project" />
+    <orderEntry type="library" name="Maven: com.alipay.sdk:alipay-sdk-java:3.7.26.ALL" level="project" />
   </component>
 </module>

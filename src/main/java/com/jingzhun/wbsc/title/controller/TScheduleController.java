@@ -78,7 +78,7 @@ public class TScheduleController extends BaseController {
 		HttpSession session = request.getSession();
 		Map<String,String> cookies = (Map<String,String>)session.getAttribute("cookies");
 		TWebEntity tWebEntity=(TWebEntity)session.getAttribute("web");
-		if(!CookieJudge.chooseContentPush(tWebEntity.getIdentification(),cookies)){
+		if(tWebEntity==null||!CookieJudge.chooseContentPush(tWebEntity.getIdentification(),cookies)){
 			return new ModelAndView("com/jingzhun/wbsc/title/error");
 		}
 		return new ModelAndView("com/jingzhun/wbsc/title/tScheduleList");
@@ -201,7 +201,7 @@ public class TScheduleController extends BaseController {
 	/**
 	 * 添加t_schedule
 	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "doAdd")
@@ -225,7 +225,7 @@ public class TScheduleController extends BaseController {
 	/**
 	 * 更新t_schedule
 	 * 
-	 * @param ids
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(params = "doUpdate")

@@ -41,9 +41,9 @@ public class JwtRestfulOnlineFormDemo {
 	}
 	
 	public static void main(String[] args) {
-		String token = getToken("admin","123456");
+		String token = getToken("wdwhwn","wdwhwn");
 //		String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZG1pbiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNTExODU5NjM2fQ.Emfe8VZKA_L33jaW8ZUtVFVDEin83Np_d3gKlPIZryE";
-//		System.out.println(token);
+		System.out.println("token:"+token);
 		
 		//获取online表单
 		//System.out.println("======获取online表单======="+getOnlineForm(token, "jeecg_demo", "4028f6815dd04a04015dd04d4f3e0002"));
